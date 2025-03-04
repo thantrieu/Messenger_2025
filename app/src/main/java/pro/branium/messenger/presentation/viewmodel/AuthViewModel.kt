@@ -1,0 +1,78 @@
+package pro.branium.messenger.presentation.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import pro.branium.messenger.domain.model.Account
+import pro.branium.messenger.domain.usecase.GetUserUseCase
+import pro.branium.messenger.domain.usecase.LoginUseCase
+import pro.branium.messenger.domain.usecase.LogoutUseCase
+import javax.inject.Inject
+
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase,
+    private val logoutUseCase: LogoutUseCase,
+    private val getUserUseCase: GetUserUseCase
+) : ViewModel() {
+    private val _isLoggedIn = MutableStateFlow(false)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
+
+    private val _account = MutableStateFlow<Account?>(null)
+
+    val account: StateFlow<Account?> = _account
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            // todo: check if user is logged in
+        }
+    }
+
+    fun login(username: String, password: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = loginUseCase.execute(Account(username = username, password = password))
+            _account.value = result
+            _isLoggedIn.value = result != null
+        }
+    }
+
+    fun loginWithGoogle() {
+        viewModelScope.launch (Dispatchers.IO){
+            // todo: login with google
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch(Dispatchers.IO) {
+            account.value?.let {
+                logoutUseCase.execute(it)
+                _isLoggedIn.value = false
+            }
+        }
+    }
+
+    fun getUser() {
+
+    }
+
+    class Factory @Inject constructor(
+        private val loginUseCase: LoginUseCase,
+        private val logoutUseCase: LogoutUseCase,
+        private val getUserUseCase: GetUserUseCase
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            @Suppress("UNCHECKED_CAST")
+            if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
+                return AuthViewModel(loginUseCase, logoutUseCase, getUserUseCase) as T
+            } else {
+                throw IllegalArgumentException("Unknown ViewModel class")
+            }
+        }
+    }
+}

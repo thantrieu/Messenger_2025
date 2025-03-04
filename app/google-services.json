@@ -1,0 +1,113 @@
+{
+  "project_info": {
+    "project_number": "303922521901",
+    "project_id": "messenger-2d4f8",
+    "storage_bucket": "messenger-2d4f8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:303922521901:android:edb39c82c724c7011a55a4",
+        "android_client_info": {
+          "package_name": "net.braniumacademy.messenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "303922521901-j09sro3kil8fkae1kfvnn2pngkuim1og.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.braniumacademy.messenger",
+            "certificate_hash": "bdce8f0e69f5fc75dcfe594b2af16dd3d0be51a1"
+          }
+        },
+        {
+          "client_id": "303922521901-57m574cmsf5pl9rv43u6u350h10jlrk0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNq05JiM8CsEtGRovPN1KAvNlIT8eF3Mk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "303922521901-57m574cmsf5pl9rv43u6u350h10jlrk0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:303922521901:android:393c6de8f0ff68c11a55a4",
+        "android_client_info": {
+          "package_name": "pro.branium.messenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "303922521901-vusfn235b2jt24gb8g601b27cd5r2ens.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pro.branium.messenger",
+            "certificate_hash": "e57495759f37b92b807d4eaccab2548a95338c01"
+          }
+        },
+        {
+          "client_id": "303922521901-57m574cmsf5pl9rv43u6u350h10jlrk0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNq05JiM8CsEtGRovPN1KAvNlIT8eF3Mk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "303922521901-57m574cmsf5pl9rv43u6u350h10jlrk0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:303922521901:android:19835d2eda2e28ec1a55a4",
+        "android_client_info": {
+          "package_name": "pro.branium.testfcm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "303922521901-57m574cmsf5pl9rv43u6u350h10jlrk0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNq05JiM8CsEtGRovPN1KAvNlIT8eF3Mk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "303922521901-57m574cmsf5pl9rv43u6u350h10jlrk0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
