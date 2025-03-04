@@ -163,7 +163,7 @@ fun LoginScreen(
             Text(
                 text = "Forgot Password?",
                 color = Color(0xFF6B46C1), // Deep purple
-                modifier = Modifier.clickable { /* Handle forget password */ }
+                modifier = Modifier.clickable { onForgotPasswordClick() }
             )
         }
 
@@ -184,7 +184,7 @@ fun LoginScreen(
 
         // Login with Google Button (Improved visibility)
         Button(
-            onClick = { /* Handle login with Gmail */ },
+            onClick = { onGoogleLoginClick() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -218,15 +218,16 @@ fun LoginScreen(
 
         // Create Account
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onCreateAccountClick() },
             horizontalArrangement = Arrangement.Center
         ) {
             Text(text = "Don't have an account?", color = Color(0xFF333333))
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Create Account",
-                color = Color(0xFF6B46C1),
-                modifier = Modifier.clickable { /* Handle create account */ }
+                color = Color(0xFF6B46C1)
             )
         }
     }

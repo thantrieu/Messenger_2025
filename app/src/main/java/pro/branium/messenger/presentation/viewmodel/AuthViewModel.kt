@@ -3,7 +3,6 @@ package pro.branium.messenger.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,11 +21,10 @@ class AuthViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase
 ) : ViewModel() {
     private val _isLoggedIn = MutableStateFlow(false)
-    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
-
     private val _account = MutableStateFlow<Account?>(null)
 
     val account: StateFlow<Account?> = _account
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -42,9 +40,22 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun loginWithGoogle() {
-        viewModelScope.launch (Dispatchers.IO){
-            // todo: login with google
+    fun startGoogleSignIn() {
+        // todo: start google sign in
+    }
+
+    fun onGoogleSignInResult(idToken: String?, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (!idToken.isNullOrEmpty()) {
+                    //
+                    onSuccess()
+                } else {
+                    throw Exception("Invalid Google ID")
+                }
+            } catch (e: Exception) {
+                onError(e.message ?: "Google login failed")
+            }
         }
     }
 

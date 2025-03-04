@@ -1,5 +1,6 @@
 package pro.branium.messenger.presentation.navigation
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
@@ -13,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import pro.branium.messenger.presentation.MainActivity
 import pro.branium.messenger.presentation.screens.ForgotPasswordScreen
 import pro.branium.messenger.presentation.screens.HomeScreen
 import pro.branium.messenger.presentation.screens.LoginScreen
@@ -26,8 +28,9 @@ import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 fun Navigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    authViewModel: AuthViewModel
 ) {
+    val activity = LocalActivity.current as MainActivity
+    val authViewModel: AuthViewModel = hiltViewModel()
     val isLoggedInState by authViewModel.isLoggedIn.collectAsState()
     val startDestination = if (isLoggedInState) Screen.Home.route else Screen.Login.route
     SharedTransitionLayout {
@@ -68,12 +71,19 @@ fun Navigation(
                             }
                         },
                         onGoogleLoginClick = {
-                            authViewModel.loginWithGoogle()
-                            navController.navigate(Screen.Home.route) {
-                                popUpTo(Screen.Login.route) {
-                                    inclusive = true
-                                }
-                            }
+//                            authViewModel.loginWithGoogle()
+//                            navController.navigate(Screen.Home.route) {
+//                                popUpTo(Screen.Login.route) {
+//                                    inclusive = true
+//                                }
+//                            }
+                            activity.launchGoogleSignIn()
+                        },
+                        onForgotPasswordClick = {
+                            navController.navigate(Screen.ForgetPassword.route)
+                        },
+                        onCreateAccountClick = {
+                            navController.navigate(Screen.Signup.route)
                         }
                     )
                 }
@@ -91,10 +101,8 @@ fun Navigation(
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val authViewModel: AuthViewModel = hiltViewModel()
     Navigation(
         modifier = Modifier.fillMaxSize(),
-        navController = navController,
-        authViewModel = authViewModel
+        navController = navController
     )
 }
