@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -91,7 +92,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Login",
+            text = stringResource(R.string.title_login),
             style = MaterialTheme.typography.headlineLarge,
             color = Color(0xFF333333) // Dark gray for better contrast
         )
@@ -102,7 +103,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email", color = Color(0xFF333333)) },
+            label = { Text(stringResource(R.string.email), color = Color(0xFF333333)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Email,
@@ -110,7 +111,12 @@ fun LoginScreen(
                     tint = Color(0xFF333333)
                 )
             },
-            placeholder = { Text("example@email.com", color = Color(0xFF888888)) },
+            placeholder = {
+                Text(
+                    stringResource(R.string.email_placeholder),
+                    color = Color(0xFF888888)
+                )
+            },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -121,7 +127,9 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password", color = Color(0xFF333333)) },
+            label = {
+                Text(stringResource(R.string.label_password), color = Color(0xFF333333))
+            },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Lock,
@@ -139,7 +147,12 @@ fun LoginScreen(
                     )
                 }
             },
-            placeholder = { Text("Enter your password", color = Color(0xFF888888)) },
+            placeholder = {
+                Text(
+                    stringResource(R.string.password_placeholder),
+                    color = Color(0xFF888888)
+                )
+            },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -158,10 +171,10 @@ fun LoginScreen(
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Remember Me", color = Color(0xFF333333))
+                Text(text = stringResource(R.string.remember_me), color = Color(0xFF333333))
             }
             Text(
-                text = "Forgot Password?",
+                text = stringResource(R.string.forgot_password),
                 color = Color(0xFF6B46C1), // Deep purple
                 modifier = Modifier.clickable { onForgotPasswordClick() }
             )
@@ -177,12 +190,11 @@ fun LoginScreen(
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B46C1)) // Deep purple
         ) {
-            Text(text = "Login", color = Color.White)
+            Text(text = stringResource(R.string.action_login), color = Color.White)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Login with Google Button (Improved visibility)
         Button(
             onClick = { onGoogleLoginClick() },
             modifier = Modifier
@@ -208,7 +220,7 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Login with Google",
+                    text = stringResource(R.string.action_login_with_google),
                     color = Color(0xFF4285F4) // Google's blue for text
                 )
             }
@@ -223,10 +235,13 @@ fun LoginScreen(
                 .clickable { onCreateAccountClick() },
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = "Don't have an account?", color = Color(0xFF333333))
+            Text(
+                text = stringResource(R.string.label_dont_have_account),
+                color = Color(0xFF333333)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Create Account",
+                text = stringResource(R.string.action_create_account),
                 color = Color(0xFF6B46C1)
             )
         }

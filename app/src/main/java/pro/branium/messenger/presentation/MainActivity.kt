@@ -8,11 +8,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import pro.branium.messenger.presentation.navigation.AppNavigation
 import pro.branium.messenger.presentation.theme.Messenger2025Theme
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
@@ -50,6 +53,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         oneTapClient = Identity.getSignInClient(this)
+
+        lifecycleScope.launch {
+            authViewModel.startGoogleSignIn.collectLatest { shouldStart ->
+                if (shouldStart) {
+                    launchGoogleSignIn()
+                    authViewModel.onGoogleSignInStarted()
+                }
+            }
+        }
+
         setContent {
             Messenger2025Theme {
                 AppNavigation()
@@ -57,7 +70,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun launchGoogleSignIn() {
+    private fun launchGoogleSignIn() {
         authViewModel.startGoogleSignIn() // Signal start (optional)
         oneTapClient.beginSignIn(signInRequest)
             .addOnSuccessListener { result ->

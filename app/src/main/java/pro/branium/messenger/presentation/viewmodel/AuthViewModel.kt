@@ -22,9 +22,11 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
     private val _isLoggedIn = MutableStateFlow(false)
     private val _account = MutableStateFlow<Account?>(null)
+    private val _startGoogleSignIn = MutableStateFlow(false)
 
     val account: StateFlow<Account?> = _account
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
+    val startGoogleSignIn: StateFlow<Boolean> = _startGoogleSignIn
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -41,7 +43,15 @@ class AuthViewModel @Inject constructor(
     }
 
     fun startGoogleSignIn() {
-        // todo: start google sign in
+        viewModelScope.launch {
+            _startGoogleSignIn.value = true
+        }
+    }
+
+    fun onGoogleSignInStarted() {
+        viewModelScope.launch {
+            _startGoogleSignIn.value = false
+        }
     }
 
     fun onGoogleSignInResult(idToken: String?, onSuccess: () -> Unit, onError: (String) -> Unit) {

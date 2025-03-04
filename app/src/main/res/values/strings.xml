@@ -9,6 +9,7 @@
     <string name="hint_text_password">Your password</string>
     <string name="action_register">Register</string>
     <string name="action_login">Login</string>
+    <string name="email">Email</string>
     <string name="des_avatar_image">Avatar image</string>
     <string name="title_select_avatar">Select Your Avatar:</string>
     <string name="hint_text_register_username">Your Username</string>
@@ -25,7 +26,7 @@
     <string name="error_avatar">You must pick your avatar first</string>
     <string name="message_login_failed">Incorrect username or password. Login failed.</string>
     <string name="title_chat">Chat</string>
-    <string name="title_login">Login</string>
+    <string name="title_login">@string/action_login</string>
     <string name="title_register">Register</string>
     <string name="title_voice_call">Voice Call</string>
     <string name="title_call">Call</string>
@@ -84,4 +85,11 @@
     <string name="action_login_with_google">Login with Google</string>
     <string name="desc_app_logo">Application logo</string>
     <string name="label_feature_coming_soon">This feature is under development.</string>
+    <string name="email_placeholder">example@email.com</string>
+    <string name="label_password">Password</string>
+    <string name="password_placeholder">Enter your password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="action_create_account">Create Account</string>
+    <string name="label_dont_have_account">Don\'t have an account?</string>
 </resources>
