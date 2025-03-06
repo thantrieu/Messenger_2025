@@ -85,7 +85,7 @@ fun LoginScreen(
 
     LaunchedEffect(triggerLogin) {
         if (loginFormState.isCorrect) {
-            authViewModel.login(username = email, password = password)
+            authViewModel.login(username = email, password = password, rememberMe = rememberMe)
             triggerLogin = false
         }
     }
@@ -101,7 +101,7 @@ fun LoginScreen(
                 .fillMaxSize()
                 .background(color = Color(0xFFF5F5F5)) // Light gray background
                 .padding(innerPadding)
-                .padding(16.dp),
+                .padding(24.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

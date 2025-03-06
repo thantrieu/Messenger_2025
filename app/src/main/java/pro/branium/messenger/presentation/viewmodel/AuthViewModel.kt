@@ -81,14 +81,16 @@ class AuthViewModel @Inject constructor(
         )
     }
 
-    fun login(username: String, password: String) {
+    fun login(username: String, password: String, rememberMe: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             _loginState.value = LoginState(isLoading = true)
             val result = loginUseCase.execute(Account(username = username, password = password))
             _account.value = result
             _isLoggedIn.value = result != null
             if (_isLoggedIn.value) {
-                saveLoginStatus()
+                if(rememberMe) {
+                    saveLoginStatus()
+                }
                 _loginState.value = LoginState(isSuccess = true)
             } else {
                 _loginState.value =
