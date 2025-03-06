@@ -54,6 +54,8 @@ dependencies {
     // firebase login auth
     implementation(libs.firebase.ui.auth)
     implementation(libs.firebase.ui.auth)
+    // data store
+    implementation(libs.androidx.datastore.preferences)
 
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)

@@ -8,7 +8,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -17,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pro.branium.messenger.presentation.navigation.AppNavigation
+import pro.branium.messenger.presentation.navigation.Screen
 import pro.branium.messenger.presentation.theme.Messenger2025Theme
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 
@@ -64,8 +74,41 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            val navController = rememberNavController()
+            val snackbarHostState = remember { SnackbarHostState() }
+            val scope = rememberCoroutineScope()
+
+            LaunchedEffect(authViewModel.isLoggedIn) {
+                authViewModel.isLoggedIn.collectLatest { isLoggedIn ->
+                    if (isLoggedIn) {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                }
+            }
+
+            LaunchedEffect(authViewModel.lastError) {
+                authViewModel.lastError.collectLatest { errorMessage ->
+                    errorMessage?.let {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = it,
+                                withDismissAction = true
+                            )
+                            authViewModel.cleanError()
+                        }
+                    }
+                }
+            }
+
             Messenger2025Theme {
-                AppNavigation()
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    AppNavigation(navController)
+                    SnackbarHost(snackbarHostState)
+                }
             }
         }
     }

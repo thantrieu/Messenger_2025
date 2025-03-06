@@ -23,7 +23,7 @@ import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 @Composable
 fun Navigation(navController: NavHostController) {
     val authViewModel: AuthViewModel = hiltViewModel()
-    val isLoggedInState by authViewModel.isLoggedIn.collectAsState()
+    val isLoggedInState by authViewModel.isLoggedIn.collectAsState(false)
     val startDestination = if (isLoggedInState) Screen.Home.route else Screen.Login.route
     SharedTransitionLayout {
         AnimatedVisibility(visible = true) {
@@ -54,13 +54,13 @@ fun Navigation(navController: NavHostController) {
                 }
                 composable(Screen.Login.route) {
                     LoginScreen(
-                        onLoginClick = {
-                            authViewModel.logout()
-                            navController.navigate(Screen.Home.route) {
-                                popUpTo(Screen.Login.route) {
-                                    inclusive = true
-                                }
-                            }
+                        onLoginSuccess = {
+//                            authViewModel.login()
+//                            navController.navigate(Screen.Home.route) {
+//                                popUpTo(Screen.Login.route) {
+//                                    inclusive = true
+//                                }
+//                            }
                         },
                         onGoogleLoginClick = {
                             authViewModel.startGoogleSignIn()
@@ -85,7 +85,6 @@ fun Navigation(navController: NavHostController) {
 }
 
 @Composable
-fun AppNavigation() {
-    val navController = rememberNavController()
+fun AppNavigation(navController: NavHostController) {
     Navigation(navController = navController)
 }
