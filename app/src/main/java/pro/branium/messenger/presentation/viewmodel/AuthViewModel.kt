@@ -1,6 +1,5 @@
 package pro.branium.messenger.presentation.viewmodel
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -13,10 +12,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pro.branium.messenger.R
 import pro.branium.messenger.domain.model.Account
@@ -25,7 +27,6 @@ import pro.branium.messenger.domain.usecase.LoginUseCase
 import pro.branium.messenger.domain.usecase.LogoutUseCase
 import pro.branium.messenger.presentation.screens.LoginFormState
 import pro.branium.messenger.presentation.screens.LoginState
-import java.lang.Thread.State
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,8 +43,7 @@ class AuthViewModel @Inject constructor(
     private val _loginFormState = MutableStateFlow(LoginFormState())
     private val _loginState = MutableStateFlow(LoginState())
 
-    val account: StateFlow<Account?> = _account
-    val isLoggedIn = dataStore.data
+    val isLoggedIn: StateFlow<Boolean> = dataStore.data
         .catch { exception ->
             if (exception is Exception) {
                 emit(emptyPreferences())
@@ -52,12 +52,22 @@ class AuthViewModel @Inject constructor(
             }
         }
         .map { preferences ->
-            preferences[IS_LOGGED_IN_KEY] ?: _isLoggedIn.value
+            preferences[IS_LOGGED_IN_KEY] == true
         }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
+    val account: StateFlow<Account?> = _account
     val startGoogleSignIn: StateFlow<Boolean> = _startGoogleSignIn
     val lastError: StateFlow<String?> = _lastError.asStateFlow()
     val loginFormState: StateFlow<LoginFormState> = _loginFormState.asStateFlow()
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
+
+    suspend fun isUserLoggedIn(): Boolean {
+        return dataStore.data.first()[IS_LOGGED_IN_KEY] == true
+    }
 
     fun onLoginClicked(username: String, password: String) {
         val usernameError = if (username.length < 3) R.string.error_username else null
@@ -69,7 +79,6 @@ class AuthViewModel @Inject constructor(
             passwordError = passwordError,
             isCorrect = isCorrect
         )
-        Log.e("==>", "onLoginClicked: ${_loginFormState.value}")
     }
 
     fun login(username: String, password: String) {
@@ -78,13 +87,14 @@ class AuthViewModel @Inject constructor(
             val result = loginUseCase.execute(Account(username = username, password = password))
             _account.value = result
             _isLoggedIn.value = result != null
-            if(_isLoggedIn.value) {
+            if (_isLoggedIn.value) {
                 saveLoginStatus()
                 _loginState.value = LoginState(isSuccess = true)
             } else {
-                _loginState.value = LoginState(isSuccess = false, errorMessage = R.string.login_error)
+                _loginState.value =
+                    LoginState(isSuccess = false, errorMessage = R.string.login_error)
             }
-            Log.e("==>", "login: ${_loginState.value}")
+            _loginFormState.value = LoginFormState()
         }
     }
 

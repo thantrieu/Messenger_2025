@@ -78,31 +78,31 @@ class MainActivity : ComponentActivity() {
             val snackbarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
 
-            LaunchedEffect(authViewModel.isLoggedIn) {
-                authViewModel.isLoggedIn.collectLatest { isLoggedIn ->
-                    if (isLoggedIn) {
-                        navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Login.route) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                }
-            }
-
-            LaunchedEffect(authViewModel.lastError) {
-                authViewModel.lastError.collectLatest { errorMessage ->
-                    errorMessage?.let {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = it,
-                                withDismissAction = true
-                            )
-                            authViewModel.cleanError()
-                        }
-                    }
-                }
-            }
+//            LaunchedEffect(authViewModel.isLoggedIn) {
+//                authViewModel.isLoggedIn.collectLatest { isLoggedIn ->
+//                    if (isLoggedIn) {
+//                        navController.navigate(Screen.Home.route) {
+//                            popUpTo(Screen.Login.route) {
+//                                inclusive = true
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//            LaunchedEffect(authViewModel.lastError) {
+//                authViewModel.lastError.collectLatest { errorMessage ->
+//                    errorMessage?.let {
+//                        scope.launch {
+//                            snackbarHostState.showSnackbar(
+//                                message = it,
+//                                withDismissAction = true
+//                            )
+//                            authViewModel.cleanError()
+//                        }
+//                    }
+//                }
+//            }
 
             Messenger2025Theme {
                 Surface(modifier = Modifier.fillMaxSize()) {
