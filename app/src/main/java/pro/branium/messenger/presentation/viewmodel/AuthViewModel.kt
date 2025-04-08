@@ -66,7 +66,21 @@ class AuthViewModel @Inject constructor(
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
 
     suspend fun isUserLoggedIn(): Boolean {
-        return dataStore.data.first()[IS_LOGGED_IN_KEY] == true
+        val isLoggedIn = dataStore.data.first()[IS_LOGGED_IN_KEY] == true
+        loadLoggedInUser()
+        return isLoggedIn
+    }
+
+    private fun loadLoggedInUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val username = dataStore.data.first()[USERNAME_KEY]
+            if (!username.isNullOrEmpty()) {
+                val result = getUserUseCase.execute(username)
+                _account.value = result
+            } else {
+                _account.value = null
+            }
+        }
     }
 
     fun onLoginClicked(username: String, password: String) {
@@ -88,7 +102,7 @@ class AuthViewModel @Inject constructor(
             _account.value = result
             _isLoggedIn.value = result != null
             if (_isLoggedIn.value) {
-                if(rememberMe) {
+                if (rememberMe) {
                     saveLoginStatus()
                 }
                 _loginState.value = LoginState(isSuccess = true)

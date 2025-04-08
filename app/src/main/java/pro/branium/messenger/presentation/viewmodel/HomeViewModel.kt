@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import pro.branium.messenger.domain.model.Account
 import pro.branium.messenger.domain.model.DataListState
 import pro.branium.messenger.domain.model.Message
+import pro.branium.messenger.domain.model.MessageList
 import pro.branium.messenger.domain.usecase.GetLastMessagesUseCase
 import javax.inject.Inject
 
@@ -21,7 +22,8 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val _friendAccounts = MutableStateFlow<List<Account>>(emptyList())
     private val _lastMessages = MutableStateFlow<List<Message>>(emptyList())
-    private val _lastMessageListState = MutableStateFlow<DataListState<*>>(DataListState.Loading)
+    private val _lastMessageListState =
+        MutableStateFlow<DataListState<MessageList>>(DataListState.Loading)
 
     val lastMessages: StateFlow<List<Message>> = _lastMessages.asStateFlow()
     val lastMessageListState: StateFlow<DataListState<*>> = _lastMessageListState.asStateFlow()
@@ -33,14 +35,11 @@ class HomeViewModel @Inject constructor(
     fun loadLastMessages(username: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val result = getLastMessagesUseCase.execute(username)
-            result.onSuccess {
-                if(it.messages.isNotEmpty()) {
-                    _lastMessageListState.value = DataListState.Success(it.messages)
-                } else {
-                    _lastMessageListState.value = DataListState.Empty
-                }
+            result.onSuccess { messageList: MessageList ->
+                _lastMessageListState.value = DataListState.Success<MessageList>(messageList)
             }.onFailure {
-                _lastMessageListState.value = DataListState.Error(it.message ?: "Unknown error")
+                _lastMessageListState.value =
+                    DataListState.Error(message = it.message, throwable = it)
             }
         }
     }

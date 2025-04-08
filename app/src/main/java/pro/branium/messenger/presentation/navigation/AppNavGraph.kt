@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,14 +26,17 @@ import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Navigation(navController: NavHostController, startDestination: String) {
-    val authViewModel: AuthViewModel = hiltViewModel()
-
+fun Navigation(
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    startDestination: String
+) {
     SharedTransitionLayout {
         AnimatedVisibility(visible = true) {
             NavHost(navController = navController, startDestination = startDestination) {
                 composable(Screen.Home.route) {
                     HomeScreen(
+                        authViewModel = authViewModel,
                         onLogout = {
                             authViewModel.logout()
                             navController.navigate(Screen.Login.route) {
@@ -57,6 +59,7 @@ fun Navigation(navController: NavHostController, startDestination: String) {
                 }
                 composable(Screen.Login.route) {
                     LoginScreen(
+                        authViewModel = authViewModel,
                         onLoginSuccess = {
                             navController.navigate(Screen.Home.route) {
                                 popUpTo(Screen.Login.route) { inclusive = true }
@@ -85,9 +88,10 @@ fun Navigation(navController: NavHostController, startDestination: String) {
 }
 
 @Composable
-fun AppNavigation(navController: NavHostController) {
-    //    val isLoggedInState by authViewModel.isLoggedIn.collectAsState()
-    val authViewModel: AuthViewModel = hiltViewModel()
+fun AppNavigation(
+    navController: NavHostController,
+    authViewModel: AuthViewModel
+) {
     var startDestination by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
@@ -102,6 +106,7 @@ fun AppNavigation(navController: NavHostController) {
     } else {
         Navigation(
             navController = navController,
+            authViewModel = authViewModel,
             startDestination = startDestination!!
         )
     }

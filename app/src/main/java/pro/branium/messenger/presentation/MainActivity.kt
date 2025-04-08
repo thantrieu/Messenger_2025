@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -26,7 +25,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pro.branium.messenger.presentation.navigation.AppNavigation
-import pro.branium.messenger.presentation.navigation.Screen
 import pro.branium.messenger.presentation.theme.Messenger2025Theme
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 
@@ -106,7 +104,7 @@ class MainActivity : ComponentActivity() {
 
             Messenger2025Theme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    AppNavigation(navController)
+                    AppNavigation(navController, authViewModel)
                     SnackbarHost(snackbarHostState)
                 }
             }

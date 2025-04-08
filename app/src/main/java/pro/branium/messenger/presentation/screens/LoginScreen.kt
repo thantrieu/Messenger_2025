@@ -68,12 +68,12 @@ data class LoginFormState(
 
 @Composable
 fun LoginScreen(
+    authViewModel: AuthViewModel,
     onLoginSuccess: () -> Unit = {},
     onGoogleLoginClick: () -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
     onCreateAccountClick: () -> Unit = {}
 ) {
-    val authViewModel: AuthViewModel = hiltViewModel()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -336,5 +336,6 @@ fun LoginScreen(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    val authViewModel: AuthViewModel = hiltViewModel()
+    LoginScreen(authViewModel = authViewModel)
 }

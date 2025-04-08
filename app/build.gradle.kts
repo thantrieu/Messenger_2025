@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.viewModel)
     implementation(libs.glide)
+    implementation(libs.coil.compose)
     implementation(libs.navigation)
     implementation(libs.material.extended.icons)
 
