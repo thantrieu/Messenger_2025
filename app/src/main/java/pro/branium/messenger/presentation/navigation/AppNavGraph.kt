@@ -45,6 +45,12 @@ fun Navigation(
                         },
                         onNavigateToChat = {
                             navController.navigate(Screen.Chat.route)
+                        },
+                        onNavigateToProfile = {
+                            navController.navigate(Screen.Profile.route)
+                        },
+                        onNavigateToSettings = {
+                            // navController.navigate(Screen.Settings.route)
                         }
                     )
                 }
