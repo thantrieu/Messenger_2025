@@ -52,9 +52,6 @@ import pro.branium.messenger.R
 import pro.branium.messenger.domain.model.Account
 import pro.branium.messenger.presentation.theme.DarkGreen
 import pro.branium.messenger.presentation.theme.LightGreen
-import pro.branium.messenger.presentation.theme.MiddleGreen
-import pro.branium.messenger.presentation.theme.DarkGreen
-import pro.branium.messenger.presentation.theme.Purple80
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
