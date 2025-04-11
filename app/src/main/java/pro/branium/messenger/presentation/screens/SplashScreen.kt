@@ -35,7 +35,7 @@ fun SplashScreen(content: @Composable () -> Unit = {}) {
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(R.drawable.logo),
+                painter = painterResource(R.drawable.messenger1),
                 contentDescription = "App Logo",
                 modifier = Modifier.size(128.dp)
             )

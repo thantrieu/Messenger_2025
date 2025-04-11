@@ -47,12 +47,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -67,6 +69,9 @@ import kotlinx.coroutines.launch
 import pro.branium.messenger.R
 import pro.branium.messenger.domain.model.DataListState
 import pro.branium.messenger.domain.model.Message
+import pro.branium.messenger.domain.model.MessageList
+import pro.branium.messenger.presentation.theme.DarkGreen
+import pro.branium.messenger.presentation.theme.LightGreen
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 import pro.branium.messenger.presentation.viewmodel.FriendViewModel
 import pro.branium.messenger.presentation.viewmodel.HomeViewModel
@@ -93,9 +98,9 @@ fun HomeScreen(
     val drawerItems = remember(loggedInAccount) {
         listOf(
             DrawerItemData("Home", Icons.Default.Home) {},
-            DrawerItemData("Profile", Icons.Default.Person) { onNavigateToProfile },
-            DrawerItemData("Settings", Icons.Default.Settings) { onNavigateToSettings },
-            DrawerItemData("Logout", Icons.AutoMirrored.Filled.Logout) { onLogout }
+            DrawerItemData("Profile", Icons.Default.Person) { onNavigateToProfile() },
+            DrawerItemData("Settings", Icons.Default.Settings) { onNavigateToSettings() },
+            DrawerItemData("Logout", Icons.AutoMirrored.Filled.Logout) { onLogout() }
         )
     }
 
@@ -110,8 +115,8 @@ fun HomeScreen(
     }
 
     val lastMessages: List<Message> = remember(lastMessageState) {
-        if (lastMessageState is DataListState.Success<*>) {
-            (lastMessageState as DataListState.Success<List<Message>>).data
+        if (lastMessageState is DataListState.Success<MessageList>) {
+            (lastMessageState as DataListState.Success<MessageList>).data.messages
         } else {
             emptyList<Message>()
         }
@@ -129,17 +134,25 @@ fun HomeScreen(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                Spacer(Modifier.height(16.dp))
-                loggedInAccount?.let { acc ->
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Spacer(Modifier.width(12.dp))
-                        Text(acc.displayName, style = MaterialTheme.typography.titleMedium)
-                    }
-                    HorizontalDivider()
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = TextStyle(
+                            brush = Brush.linearGradient(
+                                colors = listOf(DarkGreen, LightGreen)
+                            ),
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.Start
+                        ),
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
+                HorizontalDivider()
                 Spacer(Modifier.height(8.dp))
                 drawerItems.forEachIndexed { index, item ->
                     NavigationDrawerItem(
@@ -192,20 +205,24 @@ fun HomeScreen(
                     style = MaterialTheme.typography.titleMedium
                 )
 
-                LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
-                    items(
-                        count = friendAccounts.size,
-                        key = { index -> friendAccounts[index].username },
-                    ) { index ->
-                        val account = friendAccounts[index]
-                        AccountItem(
-                            avatarUrl = account.imageUrl!!,
-                            displayName = account.displayName,
-                            lastMessage = "Last message",
-                            readStatusUrl = account.imageUrl!!
-                        )
-                        if (index != lastMessages.lastIndex) {
-                            HorizontalDivider()
+                if (lastMessageState is DataListState.Loading) {
+                    LoadingScreen()
+                } else {
+                    LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
+                        items(
+                            count = friendAccounts.size,
+                            key = { index -> friendAccounts[index].username },
+                        ) { index ->
+                            val account = friendAccounts[index]
+                            AccountItem(
+                                avatarUrl = account.imageUrl!!,
+                                displayName = account.displayName,
+                                lastMessage = "Last message",
+                                readStatusUrl = account.imageUrl!!
+                            )
+                            if (index != lastMessages.lastIndex) {
+                                HorizontalDivider()
+                            }
                         }
                     }
                 }
@@ -248,7 +265,7 @@ fun CustomSearchAppBar(
 
             // Search Text
             Text(
-                text = "Tìm kiếm cuộc hội thoại", // Or pass as parameter if needed
+                text = stringResource(R.string.hint_search_chat), // Or pass as parameter if needed
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 8.dp),
@@ -272,7 +289,7 @@ fun CustomSearchAppBar(
                 modifier = Modifier
                     .size(32.dp)
                     .clip(CircleShape)
-                    .clickable(onClick = onProfileClick) // Click listener directly on image
+                    .clickable(onClick = onProfileClick)
                     .background(Color.Gray) // Background for placeholder/error state
             )
             // Add slight padding after image if needed

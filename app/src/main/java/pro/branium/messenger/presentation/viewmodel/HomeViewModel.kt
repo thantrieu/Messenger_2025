@@ -26,7 +26,8 @@ class HomeViewModel @Inject constructor(
         MutableStateFlow<DataListState<MessageList>>(DataListState.Loading)
 
     val lastMessages: StateFlow<List<Message>> = _lastMessages.asStateFlow()
-    val lastMessageListState: StateFlow<DataListState<*>> = _lastMessageListState.asStateFlow()
+    val lastMessageListState: StateFlow<DataListState<MessageList>> =
+        _lastMessageListState.asStateFlow()
 
     fun setFriendAccounts(accounts: List<Account>) {
         _friendAccounts.value = accounts
