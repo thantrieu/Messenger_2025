@@ -55,7 +55,7 @@ fun Navigation(
                     )
                 }
                 composable(Screen.Profile.route) {
-                    ProfileScreen()
+                    ProfileScreen(authViewModel, navController)
                 }
                 composable(Screen.Chat.route) {
                     // ChatScreen() { }
