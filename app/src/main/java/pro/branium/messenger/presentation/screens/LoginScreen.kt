@@ -52,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import pro.branium.messenger.R
+import pro.branium.messenger.presentation.theme.DarkGreen
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 
 data class LoginState(
@@ -113,9 +114,9 @@ fun LoginScreen(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo),
+                    painter = painterResource(id = R.drawable.messenger1),
                     contentDescription = "App Logo",
-                    modifier = Modifier.size(64.dp)
+                    modifier = Modifier.size(128.dp)
                 )
             }
 
@@ -140,7 +141,7 @@ fun LoginScreen(
                     Icon(
                         imageVector = Icons.Default.Email,
                         contentDescription = "Email Icon",
-                        tint = Color(0xFF333333)
+                        tint = DarkGreen
                     )
                 },
                 placeholder = {
@@ -153,7 +154,7 @@ fun LoginScreen(
                 singleLine = true,
                 isError = loginFormState.usernameError != null,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF6B46C1), // Deep purple
+                    focusedBorderColor = DarkGreen,
                     unfocusedBorderColor = Color.Gray
                 )
             )
@@ -179,7 +180,7 @@ fun LoginScreen(
                     Icon(
                         imageVector = Icons.Default.Lock,
                         contentDescription = "Password Icon",
-                        tint = Color(0xFF333333)
+                        tint = DarkGreen
                     )
                 },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -188,7 +189,7 @@ fun LoginScreen(
                         Icon(
                             imageVector = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                             contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                            tint = Color(0xFF333333)
+                            tint = DarkGreen
                         )
                     }
                 },
@@ -202,7 +203,7 @@ fun LoginScreen(
                 singleLine = true,
                 isError = loginFormState.passwordError != null,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF6B46C1), // Deep purple
+                    focusedBorderColor = DarkGreen,
                     unfocusedBorderColor = Color.Gray
                 )
             )
@@ -232,7 +233,7 @@ fun LoginScreen(
                         onCheckedChange = { rememberMe = it },
                         modifier = Modifier.size(24.dp),
                         colors = CheckboxDefaults.colors(
-                            checkedColor = Color(0xFF6B46C1), // Deep purple
+                            checkedColor = DarkGreen,
                             uncheckedColor = Color.Gray
                         )
                     )
@@ -241,7 +242,7 @@ fun LoginScreen(
                 }
                 Text(
                     text = stringResource(R.string.forgot_password),
-                    color = Color(0xFF6B46C1), // Deep purple
+                    color = DarkGreen, // Deep purple Color(0xFF6B46C1)
                     modifier = Modifier.clickable { onForgotPasswordClick() }
                 )
             }
@@ -257,7 +258,7 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B46C1)) // Deep purple
+                colors = ButtonDefaults.buttonColors(containerColor = DarkGreen) // Deep purple
             ) {
                 Text(text = stringResource(R.string.action_login), color = Color.White)
             }
@@ -311,7 +312,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.action_create_account),
-                    color = Color(0xFF6B46C1)
+                    color = DarkGreen
                 )
             }
 

@@ -160,7 +160,10 @@ fun HomeScreen(
                         selected = index == selectedItemIndex,
                         onClick = {
                             selectedItemIndex = index
-                            drawerScope.launch { drawerState.close() }
+                            drawerScope.launch {
+                                drawerState.close()
+                                selectedItemIndex = 0
+                            }
                             item.action()
                         },
                         icon = {

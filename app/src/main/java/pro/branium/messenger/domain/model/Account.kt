@@ -16,11 +16,17 @@ data class Account(
     @SerializedName("email")
     var email: String = "",
 
+    @SerializedName("phoneNumber")
+    var phoneNumber: String = "",
+
     @SerializedName("displayName")
     var displayName: String = "",
 
     @SerializedName("gender")
-    var gender: String? = null,
+    var gender: String? = "",
+
+    @SerializedName("occupation")
+    var occupation: String? = "",
 
     @SerializedName("token")
     var token: String? = null,
@@ -45,7 +51,9 @@ data class Account(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readString(),
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
         parcel.readString(),
         parcel.readString(),
         parcel.readString()!!,

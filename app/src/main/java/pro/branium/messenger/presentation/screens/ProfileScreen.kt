@@ -226,6 +226,11 @@ fun UserInfoSection(account: Account?) {
         val slogan = account?.slogan ?: ""
         val createdAt = account?.createdAt ?: ""
         val username = account?.username ?: ""
+        val email = account?.email ?: ""
+        val phoneNumber = account?.phoneNumber ?: ""
+        val occupation = account?.occupation ?: ""
+        val gender = account?.gender ?: ""
+
         Text(
             text = displayName,
             fontSize = 28.sp,
@@ -245,10 +250,13 @@ fun UserInfoSection(account: Account?) {
         Spacer(modifier = Modifier.height(16.dp))
         HorizontalDivider(thickness = 1.dp, color = DarkGreen.copy(alpha = 0.5f))
         Spacer(modifier = Modifier.height(16.dp))
-        UserInfoRow("Username:", username)
+        UserInfoRow(stringResource(R.string.label_username), username)
         Spacer(modifier = Modifier.height(8.dp))
-        // Using the current date from the image, replace with dynamic data
-        UserInfoRow("Created at:", createdAt)
+        UserInfoRow(stringResource(R.string.label_email), email)
+        UserInfoRow(stringResource(R.string.label_phone_number), phoneNumber)
+        UserInfoRow(stringResource(R.string.label_occupation), occupation)
+        UserInfoRow(stringResource(R.string.label_gender), gender)
+        UserInfoRow(stringResource(R.string.label_created_at), createdAt)
     }
 }
 
@@ -258,7 +266,7 @@ fun UserInfoRow(label: String, value: String) {
         Text(
             text = label,
             fontSize = 16.sp,
-            modifier = Modifier.width(100.dp) // Adjust width as needed for alignment
+            modifier = Modifier.width(124.dp) // Adjust width as needed for alignment
         )
         Text(
             text = value,

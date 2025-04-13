@@ -94,4 +94,10 @@
     <string name="action_create_account">Create Account</string>
     <string name="label_dont_have_account">Don\'t have an account?</string>
     <string name="login_error">Invalid username or password</string>
+    <string name="label_username">Username:</string>
+    <string name="label_created_at">Created at:</string>
+    <string name="label_email">Email:</string>
+    <string name="label_gender">Gender:</string>
+    <string name="label_phone_number">Phone number:</string>
+    <string name="label_occupation">Occupation:</string>
 </resources>
