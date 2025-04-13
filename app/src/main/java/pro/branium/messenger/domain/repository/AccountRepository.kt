@@ -8,5 +8,7 @@ interface AccountRepository {
     suspend fun signup(account: Account): Boolean
     suspend fun updateAccount(account: Account): Boolean
     suspend fun deleteAccount(account: Account): Boolean
+    suspend fun forgotPassword(email: String): Boolean
+    suspend fun resetPassword(account: Account): Boolean
     suspend fun getAccountByUsername(username: String): Account?
 }

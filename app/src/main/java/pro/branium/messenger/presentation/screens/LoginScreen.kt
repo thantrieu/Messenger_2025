@@ -116,7 +116,7 @@ fun LoginScreen(
                 Image(
                     painter = painterResource(id = R.drawable.messenger1),
                     contentDescription = "App Logo",
-                    modifier = Modifier.size(128.dp)
+                    modifier = Modifier.size(80.dp)
                 )
             }
 

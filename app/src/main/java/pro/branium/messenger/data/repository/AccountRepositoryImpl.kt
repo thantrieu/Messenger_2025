@@ -28,6 +28,14 @@ class AccountRepositoryImpl @Inject constructor(
         return dataSource.deleteAccount(account)
     }
 
+    override suspend fun forgotPassword(email: String): Boolean {
+        return dataSource.forgotPassword(email)
+    }
+
+    override suspend fun resetPassword(account: Account): Boolean {
+        return dataSource.resetPassword(account)
+    }
+
     override suspend fun getAccountByUsername(username: String): Account? {
         return dataSource.getAccount(username)
     }

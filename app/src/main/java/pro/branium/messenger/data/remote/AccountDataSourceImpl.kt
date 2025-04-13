@@ -64,6 +64,11 @@ class AccountDataSourceImpl @Inject constructor(
         return null
     }
 
+    override suspend fun forgotPassword(email: String): Boolean {
+        // todo: implement this function
+        return false
+    }
+
     override suspend fun resetPassword(account: Account): Boolean {
         // todo: implement this function
         return false

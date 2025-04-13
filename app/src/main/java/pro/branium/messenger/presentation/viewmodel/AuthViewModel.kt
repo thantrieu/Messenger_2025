@@ -22,11 +22,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pro.branium.messenger.R
 import pro.branium.messenger.domain.model.Account
+import pro.branium.messenger.domain.usecase.ForgotPasswordUseCase
 import pro.branium.messenger.domain.usecase.GetUserUseCase
 import pro.branium.messenger.domain.usecase.LoginUseCase
 import pro.branium.messenger.domain.usecase.LogoutUseCase
+import pro.branium.messenger.domain.usecase.ResetPasswordUseCase
+import pro.branium.messenger.domain.usecase.SignupUseCase
 import pro.branium.messenger.presentation.screens.LoginFormState
 import pro.branium.messenger.presentation.screens.LoginState
+import pro.branium.messenger.presentation.screens.SignupFormState
+import pro.branium.messenger.presentation.screens.SignupState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,7 +39,10 @@ class AuthViewModel @Inject constructor(
     private val dataStore: DataStore<Preferences>,
     private val loginUseCase: LoginUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val getUserUseCase: GetUserUseCase
+    private val getUserUseCase: GetUserUseCase,
+    private val resetPasswordUseCase: ResetPasswordUseCase,
+    private val forgotPasswordUseCase: ForgotPasswordUseCase,
+    private val signupUseCase: SignupUseCase
 ) : ViewModel() {
     private val _isLoggedIn = MutableStateFlow(false)
     private val _account = MutableStateFlow<Account?>(null)
@@ -42,6 +50,8 @@ class AuthViewModel @Inject constructor(
     private val _lastError = MutableStateFlow<String?>(null)
     private val _loginFormState = MutableStateFlow(LoginFormState())
     private val _loginState = MutableStateFlow(LoginState())
+    private val _signupState = MutableStateFlow(SignupState())
+    private val _signupFormState = MutableStateFlow(SignupFormState())
 
     val isLoggedIn: StateFlow<Boolean> = dataStore.data
         .catch { exception ->
@@ -64,6 +74,8 @@ class AuthViewModel @Inject constructor(
     val lastError: StateFlow<String?> = _lastError.asStateFlow()
     val loginFormState: StateFlow<LoginFormState> = _loginFormState.asStateFlow()
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
+    val signupState: StateFlow<SignupState> = _signupState.asStateFlow()
+    val signupFormState: StateFlow<SignupFormState> = _signupFormState.asStateFlow()
 
     suspend fun isUserLoggedIn(): Boolean {
         val isLoggedIn = dataStore.data.first()[IS_LOGGED_IN_KEY] == true
@@ -163,6 +175,71 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun forgotPassword(email: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            forgotPasswordUseCase.execute(email)
+        }
+    }
+
+    fun resetPassword(newPassword: String, confirmPassword: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (newPassword == confirmPassword) {
+                account.value?.let {
+                    it.password = newPassword
+                    resetPasswordUseCase.execute(it)
+                }
+            }
+        }
+    }
+
+    fun onSignupClicked(
+        displayName: String,
+        username: String,
+        email: String,
+        password: String,
+        confirmPassword: String
+    ) {
+        val displayNameError = if (displayName.length < 3) R.string.error_display_name else null
+        val usernameError = if (username.length < 3) R.string.error_username else null
+        val emailError = if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email)
+                .matches() or email.isEmpty()
+        ) R.string.error_email else null
+        val passwordError = if (password.length < 6) R.string.error_password else null
+        val confirmPasswordError =
+            if (password != confirmPassword || confirmPassword.isEmpty()) R.string.error_confirm_password else null
+        val isCorrect = displayNameError == null && usernameError == null
+                && emailError == null && passwordError == null
+                && confirmPasswordError == null
+
+        _signupFormState.value = SignupFormState(
+            displayNameError,
+            usernameError,
+            emailError,
+            passwordError,
+            confirmPasswordError,
+            isCorrect
+        )
+    }
+
+    fun signUp(
+        email: String,
+        password: String,
+        displayName: String,
+        username: String,
+        onSuccess: () -> Unit,
+        onError: (error: String?) -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val newAccount = Account(
+                email = email,
+                password = password,
+                displayName = displayName,
+                username = username
+            )
+            signupUseCase.execute(Account())
+        }
+    }
+
     fun cleanError() {
         viewModelScope.launch {
             _lastError.value = null
@@ -177,12 +254,23 @@ class AuthViewModel @Inject constructor(
         private val dataStore: DataStore<Preferences>,
         private val loginUseCase: LoginUseCase,
         private val logoutUseCase: LogoutUseCase,
-        private val getUserUseCase: GetUserUseCase
+        private val getUserUseCase: GetUserUseCase,
+        private val resetPasswordUseCase: ResetPasswordUseCase,
+        private val forgotPasswordUseCase: ForgotPasswordUseCase,
+        private val signupUseCase: SignupUseCase
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")
             if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
-                return AuthViewModel(dataStore, loginUseCase, logoutUseCase, getUserUseCase) as T
+                return AuthViewModel(
+                    dataStore,
+                    loginUseCase,
+                    logoutUseCase,
+                    getUserUseCase,
+                    resetPasswordUseCase,
+                    forgotPasswordUseCase,
+                    signupUseCase
+                ) as T
             } else {
                 throw IllegalArgumentException("Unknown ViewModel class")
             }

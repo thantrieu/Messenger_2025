@@ -9,5 +9,6 @@ interface AccountDataSource {
     suspend fun updateAccount(account: Account): Boolean
     suspend fun deleteAccount(account: Account): Boolean
     suspend fun login(account: Account): Account?
+    suspend fun forgotPassword(email: String): Boolean
     suspend fun resetPassword(account: Account): Boolean
 }
