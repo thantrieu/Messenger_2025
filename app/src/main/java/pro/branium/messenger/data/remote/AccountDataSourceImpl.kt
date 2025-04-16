@@ -2,6 +2,7 @@ package pro.branium.messenger.data.remote
 
 import pro.branium.messenger.domain.datasource.AccountDataSource
 import pro.branium.messenger.domain.model.Account
+import pro.branium.messenger.presentation.screens.SignupState
 import retrofit2.Retrofit
 import javax.inject.Inject
 import javax.inject.Named
@@ -31,22 +32,22 @@ class AccountDataSourceImpl @Inject constructor(
         return true
     }
 
-    override suspend fun createAccount(account: Account): String {
+    override suspend fun createAccount(account: Account): SignupState {
         val retrofit = createAccountRetrofit.create(AccountService::class.java)
         val result = retrofit.createAccount(account)
         return if (result.isSuccessful) {
             val responseObj = result.body()
             if (responseObj != null) {
                 if (responseObj.success) {
-                    "Success"
+                    SignupState(isSuccess = true)
                 } else {
-                    responseObj.error!!
+                    SignupState(isSuccess = false, errorMessage = responseObj.error)
                 }
             } else {
-                "null"
+                SignupState(isSuccess = false, errorMessage = "Response body is null")
             }
         } else {
-            result.body()?.error!!
+            SignupState(isSuccess = false, errorMessage = result.message())
         }
     }
 

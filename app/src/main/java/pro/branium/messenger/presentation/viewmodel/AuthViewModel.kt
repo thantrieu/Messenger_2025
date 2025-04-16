@@ -30,11 +30,12 @@ import pro.branium.messenger.domain.usecase.LoginUseCase
 import pro.branium.messenger.domain.usecase.LogoutUseCase
 import pro.branium.messenger.domain.usecase.ResetPasswordUseCase
 import pro.branium.messenger.domain.usecase.SignupUseCase
+import pro.branium.messenger.presentation.screens.FieldStatus
 import pro.branium.messenger.presentation.screens.LoginFormState
 import pro.branium.messenger.presentation.screens.LoginState
+import pro.branium.messenger.presentation.screens.SignupFormInput
 import pro.branium.messenger.presentation.screens.SignupFormState
 import pro.branium.messenger.presentation.screens.SignupState
-import pro.branium.messenger.presentation.screens.FieldStatus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -209,6 +210,10 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun resetUsernameStatus() {
+        _usernameStatus.value = null
+    }
+
     fun checkEmail(email: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _emailStatus.value = FieldStatus.LOADING
@@ -217,43 +222,57 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun onSignupClicked(
-        displayName: String,
-        username: String,
-        email: String,
-        password: String,
-        confirmPassword: String
-    ) {
-        val displayNameError = if (displayName.length < 3) R.string.error_display_name else null
-        val usernameError = if (username.length < 3) R.string.error_username else null
-        val emailError = if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email)
-                .matches() or email.isEmpty()
+    fun resetEmailStatus() {
+        _emailStatus.value = null
+    }
+
+    fun validateSignupForm(signupFormInput: SignupFormInput) {
+        val displayNameError =
+            if (signupFormInput.displayName.length < 3) R.string.error_display_name else null
+        val usernameError =
+            if (signupFormInput.username.length < 3) R.string.error_username else null
+        val emailError = if (!android.util.Patterns.EMAIL_ADDRESS.matcher(signupFormInput.email)
+                .matches() or signupFormInput.email.isEmpty()
         ) R.string.error_email else null
-        val passwordError = if (password.length < 6) R.string.error_password else null
+        val passwordError =
+            if (signupFormInput.password.length < 6) R.string.error_password else null
         val confirmPasswordError =
-            if (password != confirmPassword || confirmPassword.isEmpty()) R.string.error_confirm_password else null
+            if (signupFormInput.password != signupFormInput.confirmPassword ||
+                signupFormInput.confirmPassword.isEmpty()
+            ) {
+                R.string.error_confirm_password
+            } else {
+                null
+            }
         val isCorrect = displayNameError == null && usernameError == null
                 && emailError == null && passwordError == null
                 && confirmPasswordError == null
 
         _signupFormState.value = SignupFormState(
-            displayNameError,
-            usernameError,
-            emailError,
-            passwordError,
-            confirmPasswordError,
-            isCorrect
+            displayNameError = displayNameError,
+            usernameError = usernameError,
+            emailError = emailError,
+            passwordError = passwordError,
+            confirmPasswordError = confirmPasswordError,
+            isCorrect = isCorrect
         )
+    }
+
+    fun resetValidation() {
+        _signupFormState.value = SignupFormState()
+    }
+
+    fun resetSignupState() {
+        _signupState.value = SignupState()
     }
 
     fun signUp(
         email: String,
         password: String,
         displayName: String,
-        username: String,
-        onSuccess: () -> Unit,
-        onError: (error: String?) -> Unit
+        username: String
     ) {
+        _signupState.value = SignupState(isLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
             val newAccount = Account(
                 email = email,
@@ -261,7 +280,7 @@ class AuthViewModel @Inject constructor(
                 displayName = displayName,
                 username = username
             )
-            signupUseCase.execute(newAccount)
+            _signupState.value = signupUseCase.execute(newAccount)
         }
     }
 

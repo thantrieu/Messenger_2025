@@ -1,11 +1,12 @@
 package pro.branium.messenger.domain.repository
 
 import pro.branium.messenger.domain.model.Account
+import pro.branium.messenger.presentation.screens.SignupState
 
 interface AccountRepository {
     suspend fun login(account: Account): Account?
     suspend fun logout(account: Account): Boolean
-    suspend fun signup(account: Account): Boolean
+    suspend fun signup(account: Account): SignupState
     suspend fun updateAccount(account: Account): Boolean
     suspend fun deleteAccount(account: Account): Boolean
     suspend fun forgotPassword(email: String): Boolean

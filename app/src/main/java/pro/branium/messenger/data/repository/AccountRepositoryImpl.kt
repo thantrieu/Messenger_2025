@@ -3,6 +3,7 @@ package pro.branium.messenger.data.repository
 import pro.branium.messenger.domain.datasource.AccountDataSource
 import pro.branium.messenger.domain.model.Account
 import pro.branium.messenger.domain.repository.AccountRepository
+import pro.branium.messenger.presentation.screens.SignupState
 import javax.inject.Inject
 
 class AccountRepositoryImpl @Inject constructor(
@@ -16,8 +17,8 @@ class AccountRepositoryImpl @Inject constructor(
         return dataSource.logout(account)
     }
 
-    override suspend fun signup(account: Account): Boolean {
-        return dataSource.createAccount(account) == "Success"
+    override suspend fun signup(account: Account): SignupState {
+        return dataSource.createAccount(account)
     }
 
     override suspend fun updateAccount(account: Account): Boolean {
