@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
@@ -25,9 +24,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,8 +48,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 import pro.branium.messenger.R
@@ -86,21 +80,6 @@ data class SignupState(
 
 enum class FieldStatus {
     AVAILABLE, TAKEN, LOADING, IDLE
-}
-
-@Composable
-fun FormFieldMessage(
-    message: String?,
-    isError: Boolean
-) {
-    if (!message.isNullOrEmpty()) {
-        Text(
-            text = message,
-            color = if (isError) MaterialTheme.colorScheme.error else DarkGreen,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(start = 16.dp, top = 4.dp)
-        )
-    }
 }
 
 @Composable
@@ -519,26 +498,7 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
 
             // Show CircularProgressIndicator as a dialog
             if (signupState.isLoading) {
-                Dialog(
-                    onDismissRequest = { /* Prevent dismissing by clicking outside */ },
-                    DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-                ) {
-                    Card(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(16.dp),
-                        colors = CardDefaults.cardColors(contentColor = DarkGreen)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            CircularProgressIndicator(modifier = Modifier.size(48.dp), color = DarkGreen)
-                            Text(stringResource(R.string.label_signing_up)) // Optional message
-                        }
-                    }
-                }
+                ProcessingDialog()
             }
         }
     }
