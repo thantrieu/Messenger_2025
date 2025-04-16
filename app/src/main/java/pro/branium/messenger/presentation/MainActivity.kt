@@ -25,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pro.branium.messenger.presentation.navigation.AppNavigation
-import pro.branium.messenger.presentation.theme.Messenger2025Theme
+import pro.branium.messenger.presentation.ui.theme.Messenger2025Theme
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 
 @AndroidEntryPoint

@@ -70,8 +70,8 @@ import pro.branium.messenger.R
 import pro.branium.messenger.domain.model.DataListState
 import pro.branium.messenger.domain.model.Message
 import pro.branium.messenger.domain.model.MessageList
-import pro.branium.messenger.presentation.theme.DarkGreen
-import pro.branium.messenger.presentation.theme.LightGreen
+import pro.branium.messenger.presentation.ui.theme.DarkGreen
+import pro.branium.messenger.presentation.ui.theme.LightGreen
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 import pro.branium.messenger.presentation.viewmodel.FriendViewModel
 import pro.branium.messenger.presentation.viewmodel.HomeViewModel

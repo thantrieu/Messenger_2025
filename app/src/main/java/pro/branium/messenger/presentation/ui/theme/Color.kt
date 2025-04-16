@@ -1,4 +1,4 @@
-package pro.branium.messenger.presentation.theme
+package pro.branium.messenger.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

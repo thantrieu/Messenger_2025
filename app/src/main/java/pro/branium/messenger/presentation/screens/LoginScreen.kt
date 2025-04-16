@@ -54,10 +54,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import pro.branium.messenger.R
-import pro.branium.messenger.presentation.theme.DarkGreen
-import pro.branium.messenger.presentation.theme.GoogleBlue
-import pro.branium.messenger.presentation.theme.LightGrey
-import pro.branium.messenger.presentation.theme.TextGrey
+import pro.branium.messenger.presentation.components.FormFieldMessage
+import pro.branium.messenger.presentation.components.ProcessingDialog
+import pro.branium.messenger.presentation.ui.theme.DarkGreen
+import pro.branium.messenger.presentation.ui.theme.GoogleBlue
+import pro.branium.messenger.presentation.ui.theme.LightGrey
+import pro.branium.messenger.presentation.ui.theme.TextGrey
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 
 data class LoginState(

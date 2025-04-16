@@ -1,4 +1,4 @@
-package pro.branium.messenger.presentation.screens
+package pro.branium.messenger.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,22 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import pro.branium.messenger.R
-import pro.branium.messenger.presentation.theme.DarkGreen
-
-@Composable
-fun FormFieldMessage(
-    message: String?,
-    isError: Boolean
-) {
-    if (!message.isNullOrEmpty()) {
-        Text(
-            text = message,
-            color = if (isError) MaterialTheme.colorScheme.error else DarkGreen,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(start = 16.dp, top = 4.dp)
-        )
-    }
-}
+import pro.branium.messenger.presentation.ui.theme.DarkGreen
 
 @Composable
 fun ProcessingDialog() {

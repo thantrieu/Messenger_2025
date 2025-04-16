@@ -23,8 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pro.branium.messenger.R
-import pro.branium.messenger.presentation.theme.DarkGreen
-import pro.branium.messenger.presentation.theme.LightGreen
+import pro.branium.messenger.presentation.ui.theme.DarkGreen
+import pro.branium.messenger.presentation.ui.theme.LightGreen
 
 @Composable
 fun SplashScreen(content: @Composable () -> Unit = {}) {

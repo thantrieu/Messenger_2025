@@ -51,7 +51,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 import pro.branium.messenger.R
-import pro.branium.messenger.presentation.theme.DarkGreen
+import pro.branium.messenger.presentation.components.FormFieldMessage
+import pro.branium.messenger.presentation.components.ProcessingDialog
+import pro.branium.messenger.presentation.ui.theme.DarkGreen
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 
 data class SignupFormInput(
