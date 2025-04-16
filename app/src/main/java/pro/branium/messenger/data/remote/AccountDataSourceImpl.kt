@@ -12,11 +12,18 @@ class AccountDataSourceImpl @Inject constructor(
     @Named("deleteAccount") private val deleteAccountRetrofit: Retrofit,
     @Named("login") private val loginRetrofit: Retrofit,
     @Named("getAccountInfo") private val getAccountInfoRetrofit: Retrofit,
+    @Named("checkEmail") private val checkEmailRetrofit: Retrofit
 ) : AccountDataSource {
     override suspend fun getAccount(username: String): Account? {
         val retrofit = getAccountInfoRetrofit.create(AccountService::class.java)
         val result = retrofit.getAccount(username)
         return result.body()
+    }
+
+    override suspend fun checkEmail(email: String): Boolean {
+        val retrofit = checkEmailRetrofit.create(AccountService::class.java)
+        val result = retrofit.checkEmail(email)
+        return result.body() == true
     }
 
     override suspend fun logout(account: Account): Boolean {
@@ -72,5 +79,11 @@ class AccountDataSourceImpl @Inject constructor(
     override suspend fun resetPassword(account: Account): Boolean {
         // todo: implement this function
         return false
+    }
+
+    override suspend fun checkUsername(username: String): Boolean {
+        val retrofit = getAccountInfoRetrofit.create(AccountService::class.java)
+        val result = retrofit.getAccount(username)
+        return result.isSuccessful && result.body() != null
     }
 }

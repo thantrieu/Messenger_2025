@@ -12,6 +12,9 @@ interface AccountService {
     @GET("/")
     suspend fun getAccount(@Query("username") username: String): Response<Account?>
 
+    @GET("/")
+    suspend fun checkEmail(@Query("email") email: String): Response<Boolean>
+
     @POST("/messenger")
     suspend fun createAccount(@Body account: Account): Response<ResponseResult>
 

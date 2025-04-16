@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pro.branium.messenger.R
 import pro.branium.messenger.domain.model.Account
+import pro.branium.messenger.domain.usecase.CheckEmailUseCase
+import pro.branium.messenger.domain.usecase.CheckUsernameUseCase
 import pro.branium.messenger.domain.usecase.ForgotPasswordUseCase
 import pro.branium.messenger.domain.usecase.GetUserUseCase
 import pro.branium.messenger.domain.usecase.LoginUseCase
@@ -32,6 +34,7 @@ import pro.branium.messenger.presentation.screens.LoginFormState
 import pro.branium.messenger.presentation.screens.LoginState
 import pro.branium.messenger.presentation.screens.SignupFormState
 import pro.branium.messenger.presentation.screens.SignupState
+import pro.branium.messenger.presentation.screens.FieldStatus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,7 +45,9 @@ class AuthViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val resetPasswordUseCase: ResetPasswordUseCase,
     private val forgotPasswordUseCase: ForgotPasswordUseCase,
-    private val signupUseCase: SignupUseCase
+    private val signupUseCase: SignupUseCase,
+    private val checkUsernameUseCase: CheckUsernameUseCase,
+    private val checkEmailUseCase: CheckEmailUseCase
 ) : ViewModel() {
     private val _isLoggedIn = MutableStateFlow(false)
     private val _account = MutableStateFlow<Account?>(null)
@@ -52,6 +57,8 @@ class AuthViewModel @Inject constructor(
     private val _loginState = MutableStateFlow(LoginState())
     private val _signupState = MutableStateFlow(SignupState())
     private val _signupFormState = MutableStateFlow(SignupFormState())
+    private val _usernameStatus = MutableStateFlow<FieldStatus?>(null)
+    private val _emailStatus = MutableStateFlow<FieldStatus?>(null)
 
     val isLoggedIn: StateFlow<Boolean> = dataStore.data
         .catch { exception ->
@@ -76,6 +83,8 @@ class AuthViewModel @Inject constructor(
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
     val signupState: StateFlow<SignupState> = _signupState.asStateFlow()
     val signupFormState: StateFlow<SignupFormState> = _signupFormState.asStateFlow()
+    val usernameStatus: StateFlow<FieldStatus?> = _usernameStatus.asStateFlow()
+    val emailStatus: StateFlow<FieldStatus?> = _emailStatus.asStateFlow()
 
     suspend fun isUserLoggedIn(): Boolean {
         val isLoggedIn = dataStore.data.first()[IS_LOGGED_IN_KEY] == true
@@ -192,6 +201,22 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun checkUsername(username: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _usernameStatus.value = FieldStatus.LOADING
+            val isTaken = checkUsernameUseCase.execute(username)
+            _usernameStatus.value = if (isTaken) FieldStatus.TAKEN else FieldStatus.AVAILABLE
+        }
+    }
+
+    fun checkEmail(email: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _emailStatus.value = FieldStatus.LOADING
+            val isTaken = checkEmailUseCase.execute(email)
+            _emailStatus.value = if (isTaken) FieldStatus.TAKEN else FieldStatus.AVAILABLE
+        }
+    }
+
     fun onSignupClicked(
         displayName: String,
         username: String,
@@ -236,7 +261,7 @@ class AuthViewModel @Inject constructor(
                 displayName = displayName,
                 username = username
             )
-            signupUseCase.execute(Account())
+            signupUseCase.execute(newAccount)
         }
     }
 
@@ -257,7 +282,9 @@ class AuthViewModel @Inject constructor(
         private val getUserUseCase: GetUserUseCase,
         private val resetPasswordUseCase: ResetPasswordUseCase,
         private val forgotPasswordUseCase: ForgotPasswordUseCase,
-        private val signupUseCase: SignupUseCase
+        private val signupUseCase: SignupUseCase,
+        private val checkUsernameUseCase: CheckUsernameUseCase,
+        private val checkEmailUseCase: CheckEmailUseCase
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")
@@ -269,7 +296,9 @@ class AuthViewModel @Inject constructor(
                     getUserUseCase,
                     resetPasswordUseCase,
                     forgotPasswordUseCase,
-                    signupUseCase
+                    signupUseCase,
+                    checkUsernameUseCase,
+                    checkEmailUseCase
                 ) as T
             } else {
                 throw IllegalArgumentException("Unknown ViewModel class")

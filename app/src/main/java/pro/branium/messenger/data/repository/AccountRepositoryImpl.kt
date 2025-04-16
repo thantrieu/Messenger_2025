@@ -39,4 +39,12 @@ class AccountRepositoryImpl @Inject constructor(
     override suspend fun getAccountByUsername(username: String): Account? {
         return dataSource.getAccount(username)
     }
+
+    override suspend fun checkUsername(username: String): Boolean {
+        return dataSource.checkUsername(username)
+    }
+
+    override suspend fun checkEmail(email: String): Boolean {
+        return dataSource.checkEmail(email)
+    }
 }

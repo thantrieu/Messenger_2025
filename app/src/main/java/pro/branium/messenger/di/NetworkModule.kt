@@ -124,6 +124,17 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @Named("checkEmail")
+    fun provideCheckAccountExistsByEmailRetrofit(gson: Gson): Retrofit {
+        val baseUrl = CloudFunctionUrlBuilder.buildBaseUrl(CloudFunctionNames.CHECK_EMAIL)
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+    }
+
+    @Provides
+    @Singleton
     @Named("getAllFriends")
     fun provideGetAllFriendsRetrofit(gson: Gson): Retrofit {
         val baseUrl = CloudFunctionUrlBuilder.buildBaseUrl(CloudFunctionNames.GET_ALL_FRIENDS)

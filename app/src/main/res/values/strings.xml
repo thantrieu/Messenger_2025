@@ -111,4 +111,9 @@
     <string name="desc_clear_display_name">Clear display name</string>
     <string name="clear_username">Clear username</string>
     <string name="desc_clear_email">Clear email</string>
+    <string name="username_taken">Username already taken</string>
+    <string name="username_available">This username is available</string>
+    <string name="email_taken">This email is already in use</string>
+    <string name="email_available">This email is available</string>
+    <string name="please_correct_error">Please fix all errors before continuing</string>
 </resources>

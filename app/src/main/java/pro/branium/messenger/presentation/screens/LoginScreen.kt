@@ -104,7 +104,7 @@ fun LoginScreen(
                 .padding(innerPadding)
                 .padding(24.dp),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.Start
         ) {
             // Logo in a header
             Row(
@@ -158,6 +158,7 @@ fun LoginScreen(
                     unfocusedBorderColor = Color.Gray
                 )
             )
+            Spacer(modifier = Modifier.height(4.dp))
             if (loginFormState.usernameError != null) {
                 Text(
                     text = stringResource(loginFormState.usernameError!!),
@@ -167,7 +168,7 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Password Field
             OutlinedTextField(
@@ -207,7 +208,7 @@ fun LoginScreen(
                     unfocusedBorderColor = Color.Gray
                 )
             )
-
+            Spacer(modifier = Modifier.height(4.dp))
             if (loginFormState.passwordError != null) {
                 Text(
                     text = stringResource(loginFormState.passwordError!!),
@@ -217,7 +218,7 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Remember Me and Forgot Password
             Row(

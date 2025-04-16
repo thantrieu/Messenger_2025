@@ -48,6 +48,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.delay
 import pro.branium.messenger.R
 import pro.branium.messenger.presentation.theme.DarkGreen
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
@@ -64,8 +65,12 @@ data class SignupFormState(
 data class SignupState(
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
-    val errorMessage: Int? = null
+    val errorMessage: String? = null
 )
+
+enum class FieldStatus {
+    AVAILABLE, TAKEN, LOADING
+}
 
 @Composable
 fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel) {
@@ -80,11 +85,17 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
 
     val signupFormState by authViewModel.signupFormState.collectAsState()
     val signupState by authViewModel.signupState.collectAsState()
+    val usernameStatus by authViewModel.usernameStatus.collectAsState()
+    val emailStatus by authViewModel.emailStatus.collectAsState()
+    val pleaseCorrectError = stringResource(R.string.please_correct_error)
 
     var triggerSignup by remember { mutableStateOf(false) }
 
     LaunchedEffect(triggerSignup) {
-        if (signupFormState.isCorrect) {
+        if (signupFormState.isCorrect &&
+            usernameStatus == FieldStatus.AVAILABLE && emailStatus == FieldStatus.AVAILABLE
+        ) {
+            errorMessage = null
             authViewModel.signUp(
                 email = email,
                 password = password,
@@ -101,6 +112,38 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                     errorMessage = error
                 }
             )
+        } else {
+            errorMessage = pleaseCorrectError
+        }
+    }
+
+    LaunchedEffect(username) {
+        if (username.isNotEmpty()) {
+            delay(500)
+            authViewModel.checkUsername(username)
+            authViewModel.onSignupClicked(
+                displayName = displayName.trim(),
+                username = username,
+                email = email,
+                password = password,
+                confirmPassword = confirmPassword
+            )
+            triggerSignup = false
+        }
+    }
+
+    LaunchedEffect(email) {
+        if (email.isNotEmpty()) {
+            delay(500)
+            authViewModel.checkEmail(email)
+            authViewModel.onSignupClicked(
+                displayName = displayName.trim(),
+                username = username,
+                email = email,
+                password = password,
+                confirmPassword = confirmPassword
+            )
+            triggerSignup = false
         }
     }
 
@@ -141,54 +184,6 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                     textAlign = TextAlign.Center
                 )
 
-                // Display Name field
-                OutlinedTextField(
-                    value = displayName,
-                    onValueChange = { displayName = it.trim() },
-                    label = { Text(stringResource(R.string.display_name)) },
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    isError = signupFormState.displayNameError != null,
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null,
-                            tint = DarkGreen
-                        )
-                    },
-                    trailingIcon = {
-                        if (displayName.isNotEmpty()) {
-                            IconButton(onClick = { displayName = "" }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = stringResource(R.string.desc_clear_display_name),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        } else {
-                            null
-                        }
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = DarkGreen,
-                        unfocusedBorderColor = Color.Gray,
-                        focusedLabelColor = DarkGreen,
-                        errorLabelColor = MaterialTheme.colorScheme.error,
-                        errorTextColor = MaterialTheme.colorScheme.error
-                    )
-                )
-                if (signupFormState.displayNameError != null) {
-                    Text(
-                        text = stringResource(signupFormState.displayNameError!!),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(start = 16.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 // Username field
                 OutlinedTextField(
                     value = username,
@@ -196,7 +191,8 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                     label = { Text(stringResource(R.string.username)) },
                     modifier = Modifier
                         .fillMaxWidth(),
-                    isError = signupFormState.usernameError != null,
+                    isError = signupFormState.usernameError != null ||
+                            usernameStatus == FieldStatus.TAKEN,
                     singleLine = true,
                     leadingIcon = {
                         Icon(
@@ -226,16 +222,82 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                         errorTextColor = MaterialTheme.colorScheme.error
                     )
                 )
-                if (signupFormState.usernameError != null) {
+                Spacer(modifier = Modifier.height(4.dp))
+                if (signupFormState.usernameError != null ||
+                    username.isNotEmpty() && usernameStatus == FieldStatus.TAKEN
+                ) {
+                    val errMessage = if (signupFormState.usernameError != null) {
+                        stringResource(signupFormState.usernameError!!)
+                    } else {
+                        stringResource(R.string.username_taken)
+                    }
                     Text(
-                        text = stringResource(signupFormState.usernameError!!),
+                        text = errMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                } else if (username.isNotEmpty() && usernameStatus == FieldStatus.AVAILABLE) {
+                    Text(
+                        text = stringResource(R.string.username_available),
+                        color = DarkGreen,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Display Name field
+                OutlinedTextField(
+                    value = displayName,
+                    onValueChange = { displayName = it },
+                    label = { Text(stringResource(R.string.display_name)) },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    isError = signupFormState.displayNameError != null,
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            tint = DarkGreen
+                        )
+                    },
+                    trailingIcon = {
+                        if (displayName.isNotEmpty()) {
+                            IconButton(onClick = { displayName = "" }) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = stringResource(
+                                        R.string.desc_clear_display_name
+                                    ),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        } else {
+                            null
+                        }
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = DarkGreen,
+                        unfocusedBorderColor = Color.Gray,
+                        focusedLabelColor = DarkGreen,
+                        errorLabelColor = MaterialTheme.colorScheme.error,
+                        errorTextColor = MaterialTheme.colorScheme.error
+                    )
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                if (signupFormState.displayNameError != null) {
+                    Text(
+                        text = stringResource(signupFormState.displayNameError!!),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(start = 16.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 // Email field
                 OutlinedTextField(
@@ -244,7 +306,8 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                     label = { Text(stringResource(R.string.email)) },
                     modifier = Modifier
                         .fillMaxWidth(),
-                    isError = signupFormState.emailError != null,
+                    isError = signupFormState.emailError != null ||
+                            emailStatus == FieldStatus.TAKEN,
                     singleLine = true,
                     leadingIcon = {
                         Icon(
@@ -275,16 +338,31 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                         errorTextColor = MaterialTheme.colorScheme.error
                     )
                 )
-                if (signupFormState.emailError != null) {
+                Spacer(modifier = Modifier.height(4.dp))
+                if (signupFormState.emailError != null ||
+                    email.isNotEmpty() && emailStatus == FieldStatus.TAKEN
+                ) {
+                    val errMessage = if (signupFormState.emailError != null) {
+                        stringResource(signupFormState.emailError!!)
+                    } else {
+                        stringResource(R.string.email_taken)
+                    }
                     Text(
-                        text = stringResource(signupFormState.emailError!!),
+                        text = errMessage,
                         color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                } else if (email.isNotEmpty() && emailStatus == FieldStatus.AVAILABLE) {
+                    Text(
+                        text = stringResource(R.string.email_available),
+                        color = DarkGreen,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(start = 16.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 // Password field
                 OutlinedTextField(
@@ -333,6 +411,7 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                         errorTextColor = MaterialTheme.colorScheme.error
                     )
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 if (signupFormState.passwordError != null) {
                     Text(
                         text = stringResource(signupFormState.passwordError!!),
@@ -342,7 +421,7 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 // Confirm Password field
                 OutlinedTextField(
@@ -391,7 +470,7 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                         errorTextColor = MaterialTheme.colorScheme.error
                     )
                 )
-
+                Spacer(modifier = Modifier.height(4.dp))
                 if (signupFormState.confirmPasswordError != null) {
                     Text(
                         text = stringResource(signupFormState.confirmPasswordError!!),
@@ -402,9 +481,9 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                 }
 
                 // Error message
-                errorMessage?.let {
+                if(errorMessage != null && triggerSignup) {
                     Text(
-                        text = it,
+                        text = errorMessage!!,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
                     )
@@ -416,7 +495,7 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                 Button(
                     onClick = {
                         authViewModel.onSignupClicked(
-                            displayName = displayName,
+                            displayName = displayName.trim(),
                             username = username,
                             email = email,
                             password = password,

@@ -11,4 +11,6 @@ interface AccountRepository {
     suspend fun forgotPassword(email: String): Boolean
     suspend fun resetPassword(account: Account): Boolean
     suspend fun getAccountByUsername(username: String): Account?
+    suspend fun checkUsername(username: String): Boolean
+    suspend fun checkEmail(email: String): Boolean
 }

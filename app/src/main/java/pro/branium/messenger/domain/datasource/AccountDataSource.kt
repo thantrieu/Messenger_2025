@@ -11,4 +11,6 @@ interface AccountDataSource {
     suspend fun login(account: Account): Account?
     suspend fun forgotPassword(email: String): Boolean
     suspend fun resetPassword(account: Account): Boolean
+    suspend fun checkUsername(username: String): Boolean
+    suspend fun checkEmail(email: String): Boolean
 }
