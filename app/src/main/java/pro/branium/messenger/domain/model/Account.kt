@@ -34,11 +34,17 @@ data class Account(
     @SerializedName("imageUrl")
     var imageUrl: String? = null,
 
+    @SerializedName("backgroundImageUrl")
+    var backgroundImageUrl: String? = null,
+
     @SerializedName("slogan")
     var slogan: String = "No slogan",
 
     @SerializedName("createdAt")
     var createdAt: String = Date().toDateString(),
+
+    @SerializedName("lastUpdated")
+    var lastUpdated: String = Date().toDateString(),
 
     @SerializedName("friends")
     var friends: MutableList<String> = mutableListOf(),
@@ -56,9 +62,12 @@ data class Account(
         parcel.readString()!!,
         parcel.readString(),
         parcel.readString(),
+        parcel.readString(),
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.createStringArrayList()!!
+        parcel.readString()!!,
+        parcel.createStringArrayList()!!,
+        parcel.readString()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -71,9 +80,12 @@ data class Account(
         parcel.writeString(occupation)
         parcel.writeString(token)
         parcel.writeString(imageUrl)
+        parcel.writeString(backgroundImageUrl)
         parcel.writeString(slogan)
         parcel.writeString(createdAt)
+        parcel.writeString(lastUpdated)
         parcel.writeStringList(friends)
+        parcel.writeString(accountType)
     }
 
     override fun describeContents(): Int {
@@ -103,7 +115,10 @@ data class Account(
 
     override fun toString(): String {
         return "Account(username='$username', password='$password', " +
-                "email='$email', displayName='$displayName', gender=$gender, " +
-                "token=$token, imageUrl=$imageUrl, createdAt=$createdAt, friends=$friends)"
+                "email='$email', phoneNumber='$phoneNumber', displayName='$displayName', " +
+                "gender='$gender', occupation='$occupation', " +
+                "token=$token, imageUrl=$imageUrl, backgroundImageUrl='$backgroundImageUrl', " +
+                "slogan='$slogan', createdAt='$createdAt', " +
+                "lastUpdated='$lastUpdated', friends=$friends, accountType='$accountType')"
     }
 }
