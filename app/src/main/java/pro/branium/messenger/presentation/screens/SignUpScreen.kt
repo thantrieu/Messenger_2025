@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 import pro.branium.messenger.R
+import pro.branium.messenger.domain.model.enums.AccountType
 import pro.branium.messenger.presentation.components.FormFieldMessage
 import pro.branium.messenger.presentation.components.ProcessingDialog
 import pro.branium.messenger.presentation.ui.theme.DarkGreen
@@ -77,7 +78,8 @@ data class SignupFormState(
 data class SignupState(
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
-    val errorMessage: String? = null
+    val error: String? = null,
+    val message: String? = null
 )
 
 enum class FieldStatus {
@@ -119,7 +121,8 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
                 email = signupFormInput.email,
                 password = signupFormInput.password,
                 displayName = signupFormInput.displayName.trim(),
-                username = signupFormInput.username
+                username = signupFormInput.username,
+                accountType = AccountType.FREE
             )
         } else if (usernameStatus == FieldStatus.TAKEN || emailStatus == FieldStatus.TAKEN) {
             generalErrorMessage = pleaseCorrectError

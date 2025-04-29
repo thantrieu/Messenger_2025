@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pro.branium.messenger.R
 import pro.branium.messenger.domain.model.Account
+import pro.branium.messenger.domain.model.enums.AccountType
 import pro.branium.messenger.domain.usecase.CheckEmailUseCase
 import pro.branium.messenger.domain.usecase.CheckUsernameUseCase
 import pro.branium.messenger.domain.usecase.ForgotPasswordUseCase
@@ -98,7 +99,7 @@ class AuthViewModel @Inject constructor(
             val username = dataStore.data.first()[USERNAME_KEY]
             if (!username.isNullOrEmpty()) {
                 val result = getUserUseCase.execute(username)
-                _account.value = result
+//                _account.value = result
             } else {
                 _account.value = null
             }
@@ -120,9 +121,9 @@ class AuthViewModel @Inject constructor(
     fun login(username: String, password: String, rememberMe: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             _loginState.value = LoginState(isLoading = true)
-            val result = loginUseCase.execute(Account(username = username, password = password))
-            _account.value = result
-            _isLoggedIn.value = result != null
+            val result = loginUseCase.execute(username, password)
+//            _account.value = result
+//            _isLoggedIn.value = result != null
             if (_isLoggedIn.value) {
                 if (rememberMe) {
                     saveLoginStatus()
@@ -178,7 +179,8 @@ class AuthViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch(Dispatchers.IO) {
             account.value?.let {
-                logoutUseCase.execute(it)
+                val refreshToken = ""
+                logoutUseCase.execute(refreshToken)
                 _isLoggedIn.value = false
                 saveLoginStatus()
             }
@@ -195,8 +197,8 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             if (newPassword == confirmPassword) {
                 account.value?.let {
-                    it.password = newPassword
-                    resetPasswordUseCase.execute(it)
+                    it.passwordHash = newPassword
+//                    resetPasswordUseCase.execute(it)
                 }
             }
         }
@@ -270,17 +272,18 @@ class AuthViewModel @Inject constructor(
         email: String,
         password: String,
         displayName: String,
-        username: String
+        username: String,
+        accountType: AccountType
     ) {
         _signupState.value = SignupState(isLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
-            val newAccount = Account(
+            val signupResult = signupUseCase.execute(
                 email = email,
                 password = password,
                 displayName = displayName,
-                username = username
+                username = username,
+                accountType = accountType
             )
-            _signupState.value = signupUseCase.execute(newAccount)
         }
     }
 

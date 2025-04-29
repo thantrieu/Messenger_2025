@@ -32,7 +32,7 @@ data class Account(
     var displayName: String = "",
 
     @SerializedName("birthDate")
-    var birthDate: Date,
+    var birthDate: Date = Date(),
 
     @SerializedName("gender")
     var gender: String? = "",
@@ -123,88 +123,6 @@ data class Account(
     override fun hashCode(): Int {
         return username.hashCode()
     }
-}
-
-/**
- * Represents the core identity and authentication-related information for an account.
- * This data is fundamental for identifying and logging in a user.
- *
- * @property userId The unique identifier for the account (Primary Key).
- * @property username The unique username chosen by the user, potentially used for login.
- * @property email The user's unique email address, often used for login and communication.
- * @property passwordHash The securely hashed version of the user's password. NEVER store plain text.
- * @property accountType The type or tier of the account (e.g., FREE, PREMIUM, ADMIN).
- */
-data class AccountIdentity(
-    val userId: String,
-    val username: String,
-    val email: String,
-    val passwordHash: String, // Store securely hashed passwords only!
-    val accountType: AccountType // Using an Enum is recommended
-)
-
-/**
- * Represents the user-visible profile information associated with an account.
- * These details are often provided by the user and displayed on their profile page.
- *
- * @property userId The unique identifier for the account (Foreign Key linking to AccountIdentity).
- * @property displayName The name displayed publicly for the user (might differ from username). Nullable if optional.
- * @property phoneNumber The user's phone number. Nullable if optional.
- * @property birthDate The user's date of birth. Nullable if optional. Consider using LocalDate.
- * @property gender The user's gender identity. Nullable if optional. Consider using an Enum.
- * @property occupation The user's occupation. Nullable if optional.
- * @property avatar A URL or reference path to the user's profile picture. Nullable if optional.
- * @property coverPhoto A URL or reference path to the user's profile cover photo. Nullable if optional.
- * @property slogan A short bio or tagline provided by the user. Nullable if optional.
- */
-data class UserProfile(
-    val userId: String, // Foreign Key linking to AccountIdentity
-    val displayName: String?,
-    val phoneNumber: String?,
-    val birthDate: LocalDate?, // Or String? if not using java.time
-    val gender: Gender?,      // Using an Enum is recommended
-    val occupation: String?,
-    val avatar: String?,      // Typically a URL
-    val coverPhoto: String?,  // Typically a URL
-    val slogan: String?
-)
-
-/**
- * Represents system-managed metadata about the account record itself.
- * This data is typically generated and updated automatically by the system.
- *
- * @property userId The unique identifier for the account (Foreign Key linking to AccountIdentity).
- * @property createdAt Timestamp indicating when the account was created. Consider using Instant or Long.
- * @property lastUpdated Timestamp indicating the last time the account or profile data was modified. Consider using Instant or Long.
- */
-data class AccountMetadata(
-    val userId: String, // Foreign Key linking to AccountIdentity
-    val createdAt: Instant, // Or Long (timestamp)
-    val lastUpdated: Instant // Or Long (timestamp)
-)
-
-// --- Example Enums (Recommended) ---
-
-/**
- * Defines the possible types for an account.
- */
-enum class AccountType {
-    FREE,
-    PREMIUM,
-    PRO,
-    ADMIN
-    // Add other types as needed
-}
-
-/**
- * Defines possible gender identities. Adapt as needed for inclusivity.
- */
-enum class Gender {
-    MALE,
-    FEMALE,
-    NON_BINARY,
-    OTHER,
-    PREFER_NOT_TO_SAY
 }
 
 /**

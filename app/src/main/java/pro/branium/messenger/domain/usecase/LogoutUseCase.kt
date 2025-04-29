@@ -1,11 +1,10 @@
 package pro.branium.messenger.domain.usecase
 
-import pro.branium.messenger.domain.model.Account
-import pro.branium.messenger.domain.repository.AccountRepository
+import pro.branium.messenger.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class LogoutUseCase @Inject constructor(
-    private val repository: AccountRepository
+    private val repository: AuthRepository
 ) {
-    suspend fun execute(account: Account) = repository.logout(account)
+    suspend fun execute(refreshToken: String) = repository.logout(refreshToken)
 }

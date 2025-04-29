@@ -20,6 +20,7 @@ import java.lang.reflect.Type
 import javax.inject.Named
 import javax.inject.Singleton
 import pro.branium.messenger.utils.CloudFunctionNames
+import androidx.core.net.toUri
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -34,7 +35,7 @@ object NetworkModule {
                 typeOfT: Type?,
                 context: JsonDeserializationContext?
             ): Uri {
-                return Uri.parse(json?.asString.toString())
+                return json?.asString.toString().toUri()
             }
 
             override fun serialize(
@@ -58,9 +59,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @Named("createAccount")
-    fun provideCreateAccountRetrofit(gson: Gson): Retrofit {
-        val baseUrl = CloudFunctionUrlBuilder.buildBaseUrl(CloudFunctionNames.CREATE_ACCOUNT)
+    @Named("signup")
+    fun provideSignupRetrofit(gson: Gson): Retrofit {
+        val baseUrl = CloudFunctionUrlBuilder.buildBaseUrl(CloudFunctionNames.SIGNUP)
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create(gson))

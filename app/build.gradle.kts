@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "pro.branium.messenger"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "pro.branium.messenger"
         minSdk = 29
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -52,11 +52,14 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.storage.ktx)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.functions.ktx)
     // firebase login auth
     implementation(libs.firebase.ui.auth)
     implementation(libs.firebase.ui.auth)
     // data store
     implementation(libs.androidx.datastore.preferences)
+    // encrypt data
+    implementation(libs.androidx.security.crypto)
 
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)

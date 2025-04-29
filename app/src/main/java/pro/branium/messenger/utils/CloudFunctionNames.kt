@@ -1,7 +1,7 @@
 package pro.branium.messenger.utils
 
 object CloudFunctionNames {
-    const val CREATE_ACCOUNT = "createaccount"
+    const val SIGNUP = "signup"
     const val UPDATE_ACCOUNT = "updateaccount"
     const val DELETE_ACCOUNT = "deleteaccount"
     const val SEND_MESSAGE = "sendmessage"

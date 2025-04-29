@@ -1,7 +1,7 @@
 [versions]
 agp = "8.9.2"
 coilCompose = "2.7.0"
-datastorePreferences = "1.1.4"
+datastorePreferences = "1.1.5"
 kotlin = "2.1.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -9,7 +9,7 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
-composeBom = "2025.04.00"
+composeBom = "2025.04.01"
 ksp = "2.1.0-1.0.29"
 hilt = "2.55" # <== for Kotlin 2.1.0
 gson = "2.11.0"
@@ -19,20 +19,23 @@ converterGson = "2.11.0"
 glide = "1.0.0-beta01"
 navigationCompose = "1.2.0"
 navigation = "2.8.9"
+securityCrypto = "1.1.0-alpha07"
 viewModel = "2.8.7"
 firebaseUI = "7.2.0"
 firebaseStorageKtx = "21.0.1"
 firebaseAuth = "23.2.0"
 firebaseAnalyticsKtx = "22.4.0"
-firebaseBom = "33.12.0"
+firebaseBom = "33.13.0"
 firebaseMessagingKtx = "24.1.1"
 googleService = "4.4.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
+firebase-functions-ktx = { module = "com.google.firebase:firebase-functions-ktx" }
 material-extended-icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialExtendedIcons" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

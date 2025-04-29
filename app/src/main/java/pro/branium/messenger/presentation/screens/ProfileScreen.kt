@@ -92,7 +92,7 @@ fun ProfileScreen(
         ) {
             ProfileBackgroundImageSection(null)
 
-            ProfileImageSection(loggedInAccount?.imageUrl)
+            ProfileImageSection(loggedInAccount?.avatar)
 
             UserInfoSection(loggedInAccount)
 
@@ -222,7 +222,7 @@ fun UserInfoSection(account: Account?) {
         horizontalAlignment = Alignment.Start // Align text to the left
     ) {
         val displayName = account?.displayName ?: ""
-        val numberOfFriends = account?.friends?.size ?: 0
+        val numberOfFriends = 0
         val slogan = account?.slogan ?: ""
         val createdAt = account?.createdAt ?: ""
         val username = account?.username ?: ""

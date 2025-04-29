@@ -1,11 +1,10 @@
 package pro.branium.messenger.domain.usecase
 
-import pro.branium.messenger.domain.model.Account
-import pro.branium.messenger.domain.repository.AccountRepository
+import pro.branium.messenger.domain.repository.ProfileRepository
 import javax.inject.Inject
 
 class DeleteAccountUseCase @Inject constructor(
-    private val repository: AccountRepository
+    private val repository: ProfileRepository
 ) {
-    suspend fun execute(account: Account) = repository.deleteAccount(account)
+    suspend fun execute(userId: String) = repository.deleteProfile(userId)
 }

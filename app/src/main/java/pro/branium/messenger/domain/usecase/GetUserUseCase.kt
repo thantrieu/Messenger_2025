@@ -1,8 +1,10 @@
 package pro.branium.messenger.domain.usecase
 
-import pro.branium.messenger.domain.repository.AccountRepository
+import pro.branium.messenger.domain.repository.ProfileRepository
 import javax.inject.Inject
 
-class GetUserUseCase @Inject constructor(private val repository: AccountRepository) {
-    suspend fun execute(username: String) = repository.getAccountByUsername(username)
+class GetUserUseCase @Inject constructor(
+    private val repository: ProfileRepository
+) {
+    suspend fun execute(userId: String) = repository.getProfile(userId)
 }

@@ -4,12 +4,12 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import pro.branium.messenger.data.remote.AccountDataSourceImpl
-import pro.branium.messenger.domain.datasource.AccountDataSource
+import pro.branium.messenger.data.remote.AuthRemoteDataSourceImpl
+import pro.branium.messenger.domain.datasource.AuthRemoteDataSource
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AccountDataSourceModule {
     @Binds
-    abstract fun bindAccountDataSource(impl: AccountDataSourceImpl): AccountDataSource
+    abstract fun bindAccountDataSource(impl: AuthRemoteDataSourceImpl): AuthRemoteDataSource
 }

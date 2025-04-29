@@ -185,7 +185,7 @@ fun HomeScreen(
                     .fillMaxSize()
             ) {
                 CustomSearchAppBar(
-                    profileImageUrl = loggedInAccount?.imageUrl, // Pass the image URL
+                    profileImageUrl = loggedInAccount?.avatar, // Pass the image URL
                     onMenuClick = {
                         drawerScope.launch {
                             drawerState.open()
@@ -218,10 +218,10 @@ fun HomeScreen(
                         ) { index ->
                             val account = friendAccounts[index]
                             AccountItem(
-                                avatarUrl = account.imageUrl!!,
+                                avatarUrl = account.avatar!!,
                                 displayName = account.displayName,
                                 lastMessage = "Last message",
-                                readStatusUrl = account.imageUrl!!
+                                readStatusUrl = account.avatar!!
                             )
                             if (index != lastMessages.lastIndex) {
                                 HorizontalDivider()
