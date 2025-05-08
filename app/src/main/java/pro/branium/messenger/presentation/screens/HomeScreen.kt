@@ -67,14 +67,28 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 import pro.branium.messenger.R
+import pro.branium.messenger.domain.model.AccountIdentity
 import pro.branium.messenger.domain.model.DataListState
 import pro.branium.messenger.domain.model.Message
 import pro.branium.messenger.domain.model.MessageList
+import pro.branium.messenger.domain.model.UserProfile
 import pro.branium.messenger.presentation.ui.theme.DarkGreen
 import pro.branium.messenger.presentation.ui.theme.LightGreen
 import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 import pro.branium.messenger.presentation.viewmodel.FriendViewModel
 import pro.branium.messenger.presentation.viewmodel.HomeViewModel
+
+data class HomeState(
+    // Auth Check State
+    val isCheckingAuth: Boolean = true, // Start checking auth initially
+    val authError: String? = null, // Error during initial auth check
+    val loggedInUserIdentity: AccountIdentity? = null, // Store basic identity if needed
+
+    // Profile Fetch State
+    val isLoadingProfile: Boolean = false,
+    val userProfile: UserProfile? = null,
+    val profileErrorMessage: String? = null
+)
 
 @Composable
 fun HomeScreen(

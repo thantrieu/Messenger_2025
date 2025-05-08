@@ -54,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import pro.branium.messenger.R
+import pro.branium.messenger.domain.model.AccountIdentity
 import pro.branium.messenger.presentation.components.FormFieldMessage
 import pro.branium.messenger.presentation.components.ProcessingDialog
 import pro.branium.messenger.presentation.ui.theme.DarkGreen
@@ -64,8 +65,9 @@ import pro.branium.messenger.presentation.viewmodel.AuthViewModel
 
 data class LoginState(
     val isLoading: Boolean = false,
-    val isSuccess: Boolean? = null,
-    val errorMessage: Int? = null
+    val loggedInUser: AccountIdentity? = null,
+    val error: String? = null,
+    val loginComplete: Boolean = false
 )
 
 data class LoginFormState(
@@ -112,16 +114,17 @@ fun LoginScreen(
     }
 
     // Observe login success and trigger navigation/snackbar
-    LaunchedEffect(loginState.isSuccess) {
-        if (loginState.isSuccess == true) {
+    LaunchedEffect(loginState.loggedInUser != null) {
+        if (loginState.error == null) {
             onLoginSuccess()
         }
     }
 
-    // Observe login error and show Snackbar
-    val errorMessage = stringResource(loginState.errorMessage ?: R.string.message_login_failed)
+    // Observe login error and show Snack bar
+    val errorMessage = loginState.error ?: stringResource(R.string.message_login_failed)
     LaunchedEffect(errorMessage, loginState) {
-        if (loginState.errorMessage != null) {
+        if (loginState.error != null) {
+            authViewModel.clearLoginStatus()
             snackbarHostState.showSnackbar(message = errorMessage)
         }
     }

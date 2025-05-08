@@ -77,9 +77,9 @@ data class SignupFormState(
 
 data class SignupState(
     val isLoading: Boolean = false,
-    val isSuccess: Boolean = false,
-    val error: String? = null,
-    val message: String? = null
+    val signupComplete: Boolean = false,
+    val errorMessage: String? = null,
+    val successMessage: Int? = null
 )
 
 enum class FieldStatus {
@@ -101,7 +101,7 @@ fun SignupScreen(navController: NavHostController, authViewModel: AuthViewModel)
     var generalErrorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(signupState) {
-        if (signupState.isSuccess) {
+        if (signupState.signupComplete) {
             navController.navigate("login") {
                 popUpTo(navController.graph.id) { inclusive = true }
                 launchSingleTop = true

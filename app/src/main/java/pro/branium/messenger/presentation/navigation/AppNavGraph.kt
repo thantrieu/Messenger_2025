@@ -70,6 +70,7 @@ fun Navigation(
                             navController.navigate(Screen.Home.route) {
                                 popUpTo(Screen.Login.route) { inclusive = true }
                             }
+                            authViewModel.clearLoginStatus()
                         },
                         onGoogleLoginClick = {
                             authViewModel.startGoogleSignIn()

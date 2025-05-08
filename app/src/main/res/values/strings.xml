@@ -116,5 +116,6 @@
     <string name="email_taken">This email is already in use</string>
     <string name="email_available">This email is available</string>
     <string name="please_correct_error">Please fix all errors before continuing</string>
-    <string name="label_signing_up">Signing up...</string>
+    <string name="label_signing_up">Signing up…</string>
+    <string name="signup_success">Account created successfully!</string>
 </resources>

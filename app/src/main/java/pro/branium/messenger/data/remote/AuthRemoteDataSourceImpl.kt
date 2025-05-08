@@ -15,6 +15,7 @@ import pro.branium.messenger.data.model.response.SignupResponse
 import pro.branium.messenger.data.model.response.UserData
 import pro.branium.messenger.domain.datasource.AuthRemoteDataSource
 import pro.branium.messenger.domain.model.enums.AccountType
+import pro.branium.messenger.domain.model.error.AuthError
 import pro.branium.messenger.domain.model.error.LoginError
 import pro.branium.messenger.domain.model.error.LogoutError
 import pro.branium.messenger.domain.model.error.SignupError
@@ -199,18 +200,6 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         }
     }
 
-//    override suspend fun updateProfile(account: Account): Boolean {
-//        val retrofit = updateAccountRetrofit.create(AccountService::class.java)
-//        val result = retrofit.updateAccount(account)
-//        return result.isSuccessful
-//    }
-//
-//    override suspend fun deleteProfile(account: Account): Boolean {
-//        val retrofit = deleteAccountRetrofit.create(AccountService::class.java)
-//        val result = retrofit.deleteAccount(account.username, account.passwordHash)
-//        return result.isSuccessful
-//    }
-
     override suspend fun login(
         identity: String,
         password: String
@@ -320,19 +309,102 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         }
     }
 
-//    override suspend fun forgotPassword(email: String): Boolean {
-//        // todo: implement this function
-//        return false
-//    }
-//
-//    override suspend fun resetPassword(account: Account): Boolean {
-//        // todo: implement this function
-//        return false
-//    }
-//
-//    override suspend fun checkUsername(username: String): Boolean {
-//        val retrofit = getAccountInfoRetrofit.create(AccountService::class.java)
-//        val result = retrofit.getAccount(username)
-//        return result.isSuccessful && result.body() != null
-//    }
+    override suspend fun refreshToken(refreshToken: String): Result<AuthError, LoginResponse> {
+        return withContext(Dispatchers.IO) {
+            // 1. Prepare the data payload
+            val dataPayload = hashMapOf(
+                "refreshToken" to refreshToken
+            )
+            try {
+                // 2. Call the callable function
+                val result = functions
+                    .getHttpsCallable("refreshToken") // Name matches exported backend function
+                    .call(dataPayload)
+                    .await()
+
+                // 3. Process the result data - Use helper to map Map to LoginResponse DTO
+                val rawData: Any? = result.data
+
+                // Use the same mapping helper as login, as the expected success structure is similar
+                val loginResponse =
+                    mapRawDataToLoginResponse(rawData) // Reuse or adapt mapping logic
+
+                if (loginResponse == null) {
+                    // Mapping failed or structure was invalid
+                    return@withContext Result.Failure(
+                        AuthError.Unknown("Invalid response structure from refresh token endpoint.")
+                    )
+                }
+
+                // 4. Check for logical success/failure based on the LoginResponse DTO
+                if (loginResponse.success == true && !loginResponse.token.isNullOrBlank()) {
+                    // Logical success reported by the backend function
+                    Result.Success(loginResponse) // Return the LoginResponse DTO with new tokens/data
+                } else {
+                    // Logical failure reported by the backend function
+                    val finalErrorMessage = loginResponse.error
+                        ?: loginResponse.message
+                        ?: "Unknown token refresh error from server"
+                    // Map the server's error message to a domain error
+                    // Use AuthError or create a specific RefreshError type if needed
+                    val authError = mapServerMessageToAuthError(finalErrorMessage)
+                    Result.Failure(authError)
+                }
+            } catch (e: FirebaseFunctionsException) {
+                // 5. Handle specific Firebase Functions exceptions
+                val authError = mapFirebaseExceptionToAuthError(e) // Map to AuthError
+                Result.Failure(authError)
+            } catch (e: IOException) {
+                // 6. Handle potential network errors
+                Result.Failure(
+                    AuthError.NetworkError(
+                        e.message ?: "Network error occurred during refresh"
+                    )
+                )
+            } catch (e: Exception) {
+                // 7. Handle any other unexpected exceptions
+                Result.Failure(
+                    AuthError.Unknown(
+                        e.message ?: "An unknown error occurred during refresh"
+                    )
+                )
+            }
+        }
+    }
+
+    // Helper function to map Firebase specific errors to Domain errors (AuthError)
+    private fun mapFirebaseExceptionToAuthError(e: FirebaseFunctionsException): AuthError {
+        return when (e.code) {
+            FirebaseFunctionsException.Code.INVALID_ARGUMENT ->
+                AuthError.Unknown(e.message ?: "Invalid argument for refresh.") // Or specific error
+            FirebaseFunctionsException.Code.UNAUTHENTICATED -> // Backend might use this for invalid/expired token
+                AuthError.SessionExpired(e.message ?: "Refresh token invalid or expired.")
+
+            FirebaseFunctionsException.Code.NOT_FOUND -> // Backend might use this if token doc deleted
+                AuthError.SessionExpired(e.message ?: "Refresh token not found.")
+
+            FirebaseFunctionsException.Code.INTERNAL ->
+                AuthError.Unknown(e.message ?: "Internal server error during refresh.")
+
+            FirebaseFunctionsException.Code.UNAVAILABLE ->
+                AuthError.NetworkError("Refresh service unavailable: ${e.message}")
+
+            else -> AuthError.Unknown(
+                e.message ?: "Unknown Firebase Functions error during refresh."
+            )
+        }
+    }
+
+    // Helper function to map server's logical error message to Domain errors (AuthError)
+    private fun mapServerMessageToAuthError(errorMessage: String): AuthError {
+        return when {
+            // Check for specific messages indicating expired/invalid token
+            errorMessage.contains("invalid", ignoreCase = true) ||
+                    errorMessage.contains("expired", ignoreCase = true) ||
+                    errorMessage.contains("not found", ignoreCase = true) ->
+                AuthError.SessionExpired(errorMessage)
+            // Add more specific checks if needed
+            else -> AuthError.Unknown(errorMessage)
+        }
+    }
 }

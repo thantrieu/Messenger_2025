@@ -2,6 +2,7 @@ package pro.branium.messenger.domain.datasource
 
 import pro.branium.messenger.data.model.response.LoginResponse
 import pro.branium.messenger.domain.model.enums.AccountType
+import pro.branium.messenger.domain.model.error.AuthError
 import pro.branium.messenger.domain.model.error.LoginError
 import pro.branium.messenger.domain.model.error.LogoutError
 import pro.branium.messenger.domain.model.error.SignupError
@@ -17,4 +18,5 @@ interface AuthRemoteDataSource {
         username: String,
         accountType: AccountType
     ): Result<SignupError, String>
+    suspend fun refreshToken(refreshToken: String): Result<AuthError, LoginResponse>
 }

@@ -1,5 +1,6 @@
 package pro.branium.messenger.presentation.viewmodel
 
+import androidx.compose.ui.res.stringResource
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -23,10 +24,11 @@ import kotlinx.coroutines.launch
 import pro.branium.messenger.R
 import pro.branium.messenger.domain.model.Account
 import pro.branium.messenger.domain.model.enums.AccountType
+import pro.branium.messenger.domain.model.error.SignupError
 import pro.branium.messenger.domain.usecase.CheckEmailUseCase
 import pro.branium.messenger.domain.usecase.CheckUsernameUseCase
 import pro.branium.messenger.domain.usecase.ForgotPasswordUseCase
-import pro.branium.messenger.domain.usecase.GetUserUseCase
+import pro.branium.messenger.domain.usecase.GetProfileUseCase
 import pro.branium.messenger.domain.usecase.LoginUseCase
 import pro.branium.messenger.domain.usecase.LogoutUseCase
 import pro.branium.messenger.domain.usecase.ResetPasswordUseCase
@@ -37,6 +39,7 @@ import pro.branium.messenger.presentation.screens.LoginState
 import pro.branium.messenger.presentation.screens.SignupFormInput
 import pro.branium.messenger.presentation.screens.SignupFormState
 import pro.branium.messenger.presentation.screens.SignupState
+import pro.branium.messenger.utils.Result
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,7 +47,7 @@ class AuthViewModel @Inject constructor(
     private val dataStore: DataStore<Preferences>,
     private val loginUseCase: LoginUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val getUserUseCase: GetUserUseCase,
+    private val getProfileUseCase: GetProfileUseCase,
     private val resetPasswordUseCase: ResetPasswordUseCase,
     private val forgotPasswordUseCase: ForgotPasswordUseCase,
     private val signupUseCase: SignupUseCase,
@@ -98,7 +101,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val username = dataStore.data.first()[USERNAME_KEY]
             if (!username.isNullOrEmpty()) {
-                val result = getUserUseCase.execute(username)
+                val result = getProfileUseCase.execute(username)
 //                _account.value = result
             } else {
                 _account.value = null
@@ -119,30 +122,32 @@ class AuthViewModel @Inject constructor(
     }
 
     fun login(username: String, password: String, rememberMe: Boolean = false) {
+        _loginState.value = LoginState(isLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
-            _loginState.value = LoginState(isLoading = true)
-            val result = loginUseCase.execute(username, password)
-//            _account.value = result
-//            _isLoggedIn.value = result != null
-            if (_isLoggedIn.value) {
-                if (rememberMe) {
-                    saveLoginStatus()
+            val loginResult = loginUseCase.execute(username, password, rememberMe)
+            when (loginResult) {
+                is Result.Success -> {
+                    val accountIdentity = loginResult.value
+                    _loginState.value = LoginState(
+                        isLoading = false,
+                        error = null,
+                        loggedInUser = accountIdentity,
+                        loginComplete = true
+                    )
                 }
-                _loginState.value = LoginState(isSuccess = true)
-            } else {
-                _loginState.value =
-                    LoginState(isSuccess = false, errorMessage = R.string.login_error)
+
+                is Result.Failure -> {
+                    val loginError = loginResult.error
+                    val errorMessage = loginError.message ?: "An unknown login error occurred."
+                    _loginState.value = LoginState(
+                        isLoading = false,
+                        error = errorMessage,
+                        loggedInUser = null,
+                        loginComplete = false
+                    )
+                }
             }
             _loginFormState.value = LoginFormState()
-        }
-    }
-
-    private fun saveLoginStatus() {
-        viewModelScope.launch(Dispatchers.IO) {
-            dataStore.edit { preferences ->
-                preferences[IS_LOGGED_IN_KEY] = _isLoggedIn.value
-                preferences[USERNAME_KEY] = _account.value?.username ?: ""
-            }
         }
     }
 
@@ -163,7 +168,6 @@ class AuthViewModel @Inject constructor(
             try {
                 if (!idToken.isNullOrEmpty()) {
                     // todo
-                    saveLoginStatus()
                     onSuccess()
                     _lastError.value = null
                 } else {
@@ -179,10 +183,8 @@ class AuthViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch(Dispatchers.IO) {
             account.value?.let {
-                val refreshToken = ""
-                logoutUseCase.execute(refreshToken)
+                logoutUseCase.execute()
                 _isLoggedIn.value = false
-                saveLoginStatus()
             }
         }
     }
@@ -277,14 +279,42 @@ class AuthViewModel @Inject constructor(
     ) {
         _signupState.value = SignupState(isLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
-            val signupResult = signupUseCase.execute(
+            val signupResult: Result<SignupError, String> = signupUseCase.execute(
                 email = email,
                 password = password,
                 displayName = displayName,
                 username = username,
                 accountType = accountType
             )
+            when (signupResult) {
+                is Result.Success -> {
+                    _signupState.value = SignupState(
+                        isLoading = false,
+                        signupComplete = true,
+                        successMessage = R.string.signup_success,
+                        errorMessage = null
+                    )
+                }
+
+                is Result.Failure -> {
+                    val signupError = signupResult.error
+                    val errorMessage = signupError.message ?: "An unknown signup error occurred."
+                    _signupState.value = SignupState(
+                        isLoading = false,
+                        signupComplete = false,
+                        successMessage = null,
+                        errorMessage = errorMessage
+                    )
+                }
+            }
         }
+    }
+
+    fun clearLoginStatus() {
+        _loginState.value = _loginState.value.copy(
+            loginComplete = false,
+            error = null
+        )
     }
 
     fun cleanError() {
@@ -293,15 +323,11 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun getUser() {
-
-    }
-
     class Factory @Inject constructor(
         private val dataStore: DataStore<Preferences>,
         private val loginUseCase: LoginUseCase,
         private val logoutUseCase: LogoutUseCase,
-        private val getUserUseCase: GetUserUseCase,
+        private val getProfileUseCase: GetProfileUseCase,
         private val resetPasswordUseCase: ResetPasswordUseCase,
         private val forgotPasswordUseCase: ForgotPasswordUseCase,
         private val signupUseCase: SignupUseCase,
@@ -315,7 +341,7 @@ class AuthViewModel @Inject constructor(
                     dataStore,
                     loginUseCase,
                     logoutUseCase,
-                    getUserUseCase,
+                    getProfileUseCase,
                     resetPasswordUseCase,
                     forgotPasswordUseCase,
                     signupUseCase,
