@@ -26,10 +26,6 @@ Dự án này là một ứng dụng nhắn tin đa tính năng, được phát 
 
 ## Hình ảnh/Demo
 
-*(Thêm ảnh chụp màn hình hoặc GIF demo của ứng dụng tại đây)*
-
-**Ví dụ:**
-
 |                 Màn hình Đăng nhập                  |                  Màn hình Đăng ký                  | Màn hình Danh sách bạn bè |
 |:---------------------------------------------------:|:--------------------------------------------------:|:-------------------------:|
 | ![Màn hình Đăng nhập](screenshots/login_screen.jpg) | ![Màn hình Đăng ký](screenshots/signup_screen.jpg) |           [...]           |
