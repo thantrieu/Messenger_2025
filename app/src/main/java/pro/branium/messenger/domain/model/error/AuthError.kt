@@ -9,8 +9,9 @@ sealed class AuthError(open val message: String?) {
         override val message: String? = "Session expired. Please log in again."
     ) : AuthError(message)
 
-    data class NetworkError(
-        override val message: String? = "Network error during session check."
+    data class ConnectivityIssue(
+        override val message: String? =
+            "Could not connect to service to process authentication operation."
     ) : AuthError(message)
 
     data class Unknown(

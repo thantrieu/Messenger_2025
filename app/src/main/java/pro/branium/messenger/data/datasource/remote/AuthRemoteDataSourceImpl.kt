@@ -1,4 +1,4 @@
-package pro.branium.messenger.data.remote
+package pro.branium.messenger.data.datasource.remote
 
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
@@ -66,7 +66,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
                 val logoutError = mapFirebaseExceptionToLogoutError(e)
                 Result.Failure(logoutError)
             } catch (e: IOException) {
-                Result.Failure(LogoutError.NetworkError(e.message ?: "Network error occurred"))
+                Result.Failure(LogoutError.ConnectivityIssue(e.message ?: "Network error occurred"))
             } catch (e: Exception) {
                 Result.Failure(
                     LogoutError.UnknownError(
@@ -87,7 +87,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
                 LogoutError.UnknownError("Internal server error during logout: ${e.message}")
 
             FirebaseFunctionsException.Code.UNAVAILABLE ->
-                LogoutError.NetworkError("Logout service unavailable: ${e.message}")
+                LogoutError.ConnectivityIssue("Logout service unavailable: ${e.message}")
             // Other codes like UNAUTHENTICATED or PERMISSION_DENIED are less likely
             // for a simple token invalidation call, but could be added if needed.
             else -> LogoutError.UnknownError(
@@ -148,7 +148,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
                 val signupError = mapFirebaseExceptionToSignupError(e)
                 Result.Failure(signupError)
             } catch (e: IOException) {
-                Result.Failure(SignupError.NetworkError(e.message ?: "Network error occurred"))
+                Result.Failure(SignupError.ConnectivityIssue(e.message ?: "Network error occurred"))
             } catch (e: Exception) {
                 Result.Failure(
                     SignupError.UnknownError(
@@ -180,7 +180,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
                 SignupError.UnknownError("Internal server error during signup: ${e.message}")
 
             FirebaseFunctionsException.Code.UNAVAILABLE ->
-                SignupError.NetworkError("Signup service unavailable: ${e.message}")
+                SignupError.ConnectivityIssue("Signup service unavailable: ${e.message}")
             // Add mappings for other relevant codes if needed
             else -> SignupError.UnknownError(e.message ?: "Unknown Firebase Functions error.")
         }
@@ -233,7 +233,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
                 val loginError = mapFirebaseExceptionToLoginError(e)
                 Result.Failure(loginError)
             } catch (e: IOException) {
-                Result.Failure(LoginError.NetworkError(e.message ?: "Network error occurred"))
+                Result.Failure(LoginError.ConnectivityIssue(e.message ?: "Network error occurred"))
             } catch (e: Exception) {
                 Result.Failure(
                     LoginError.Unknown(
@@ -291,7 +291,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
                 LoginError.Unknown(e.message ?: "Internal server error during login.")
 
             FirebaseFunctionsException.Code.UNAVAILABLE ->
-                LoginError.NetworkError("Login service unavailable: ${e.message}")
+                LoginError.ConnectivityIssue("Login service unavailable: ${e.message}")
             // Add mappings for other relevant codes if needed
             else -> LoginError.Unknown(e.message ?: "Unknown Firebase Functions error.")
         }
@@ -357,7 +357,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
             } catch (e: IOException) {
                 // 6. Handle potential network errors
                 Result.Failure(
-                    AuthError.NetworkError(
+                    AuthError.ConnectivityIssue(
                         e.message ?: "Network error occurred during refresh"
                     )
                 )
@@ -387,7 +387,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
                 AuthError.Unknown(e.message ?: "Internal server error during refresh.")
 
             FirebaseFunctionsException.Code.UNAVAILABLE ->
-                AuthError.NetworkError("Refresh service unavailable: ${e.message}")
+                AuthError.ConnectivityIssue("Refresh service unavailable: ${e.message}")
 
             else -> AuthError.Unknown(
                 e.message ?: "Unknown Firebase Functions error during refresh."

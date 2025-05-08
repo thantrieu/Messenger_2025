@@ -74,7 +74,7 @@ class HomeViewModel @Inject constructor(
                     val errorMessage = when (authError) {
                         is AuthError.NotLoggedIn -> "Please log in."
                         is AuthError.SessionExpired -> "Your session expired. Please log in again."
-                        is AuthError.NetworkError -> authError.message
+                        is AuthError.ConnectivityIssue -> authError.message
                             ?: "Network error checking session."
 
                         is AuthError.Unknown -> authError.message ?: "Failed to verify session."
@@ -129,7 +129,7 @@ class HomeViewModel @Inject constructor(
                         is ProfileError.NotFound ->
                             "Could not find your profile information."
 
-                        is ProfileError.NetworkError ->
+                        is ProfileError.ConnectivityIssue ->
                             profileError.message ?: "Check your internet connection."
 
                         is ProfileError.UpdateFailed -> // Less likely for getProfile, but example

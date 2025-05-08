@@ -9,8 +9,8 @@ sealed class SignupError(open val message: String?) {
         override val message: String? = "Invalid input"
     ) : SignupError(message)
 
-    data class NetworkError(
-        override val message: String? = "Network error occurred"
+    data class ConnectivityIssue(
+        override val message: String? = "Could not connect to service to process signup operation."
     ) : SignupError(message)
 
     data class UnknownError(

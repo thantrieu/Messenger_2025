@@ -1,11 +1,8 @@
-package pro.branium.messenger.data.local.datasource
+package pro.branium.messenger.data.datasource.local
 
 import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import dagger.hilt.android.qualifiers.ApplicationContext
-import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pro.branium.messenger.domain.repository.TokenStorage

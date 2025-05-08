@@ -10,8 +10,8 @@ sealed class LoginError(open val message: String?) {
      * Represents errors related to network connectivity during the login attempt
      * (e.g., no internet, server unavailable).
      */
-    data class NetworkError(
-        override val message: String? = "A network error occurred. Please check your connection."
+    data class ConnectivityIssue(
+        override val message: String? = "Could not connect to service to process login operation."
     ) : LoginError(message)
 
     /**

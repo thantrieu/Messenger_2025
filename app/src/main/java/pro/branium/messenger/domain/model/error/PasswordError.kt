@@ -17,7 +17,9 @@ sealed class PasswordError(open val message: String?) {
     ) : PasswordError(message)
 
     // Common Errors
-    data class NetworkError(override val message: String? = "Network error occurred") :
+    data class ConnectivityIssue(
+        override val message: String? = "Could not connect to service to process operation."
+    ) :
         PasswordError(message)
 
     data class Unknown(override val message: String? = "An unknown error occurred") :

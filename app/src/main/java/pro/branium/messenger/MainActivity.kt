@@ -1,4 +1,4 @@
-package pro.branium.messenger.presentation
+package pro.branium.messenger
 
 import android.content.IntentSender
 import android.os.Bundle
@@ -17,11 +17,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.common.api.ApiException
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pro.branium.messenger.presentation.navigation.AppNavigation
@@ -103,7 +98,7 @@ class MainActivity : ComponentActivity() {
 //            }
 
             Messenger2025Theme {
-                Surface(modifier = Modifier.fillMaxSize()) {
+                Surface(modifier = Modifier.Companion.fillMaxSize()) {
                     AppNavigation(navController, authViewModel)
                     SnackbarHost(snackbarHostState)
                 }
