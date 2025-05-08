@@ -42,7 +42,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
             val dataPayload = hashMapOf("refreshToken" to refreshToken)
             try {
                 val result = functions
-                    .getHttpsCallable("logout")
+                    .getHttpsCallable("template-function")
                     .call(dataPayload)
                     .await()
 
@@ -114,7 +114,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
 
             try {
                 val result = functions
-                    .getHttpsCallable("signup")
+                    .getHttpsCallable("template-function")
                     .call(data)
                     .await()
                 val rawData = result.data
@@ -211,7 +211,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
             )
             try {
                 val result = functions
-                    .getHttpsCallable("login")
+                    .getHttpsCallable("template-function")
                     .call(data)
                     .await()
                 val rawData = result.data
@@ -318,7 +318,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
             try {
                 // 2. Call the callable function
                 val result = functions
-                    .getHttpsCallable("refreshToken") // Name matches exported backend function
+                    .getHttpsCallable("template-function")
                     .call(dataPayload)
                     .await()
 
