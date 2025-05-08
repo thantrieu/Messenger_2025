@@ -1,4 +1,4 @@
-package pro.branium.messenger.data.remote
+package pro.branium.messenger.data.datasource.remote
 
 import pro.branium.messenger.domain.datasource.FriendDataSource
 import pro.branium.messenger.domain.model.Account

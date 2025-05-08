@@ -5,8 +5,8 @@ sealed class ProfileError(open val message: String?) {
         override val message: String? = "Profile not found"
     ) : ProfileError(message)
 
-    data class NetworkError(
-        override val message: String? = "Network error"
+    data class ConnectivityIssue(
+        override val message: String? = "Could not connect to service to process profile operation."
     ) : ProfileError(message)
 
     data class UpdateFailed(

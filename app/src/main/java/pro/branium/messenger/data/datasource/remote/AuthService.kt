@@ -1,4 +1,4 @@
-package pro.branium.messenger.data.remote
+package pro.branium.messenger.data.datasource.remote
 
 import pro.branium.messenger.data.model.request.LoginRequest
 import pro.branium.messenger.data.model.request.SignupRequest

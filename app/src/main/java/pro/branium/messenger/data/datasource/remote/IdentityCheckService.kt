@@ -1,4 +1,4 @@
-package pro.branium.messenger.data.remote
+package pro.branium.messenger.data.datasource.remote
 
 import retrofit2.Response
 import retrofit2.http.GET

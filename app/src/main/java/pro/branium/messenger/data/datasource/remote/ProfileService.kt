@@ -1,7 +1,5 @@
-package pro.branium.messenger.data.remote
+package pro.branium.messenger.data.datasource.remote
 
-import pro.branium.messenger.data.model.request.SignupRequest
-import pro.branium.messenger.data.model.response.SignupResponse
 import pro.branium.messenger.domain.model.Account
 import retrofit2.Response
 import retrofit2.http.Body

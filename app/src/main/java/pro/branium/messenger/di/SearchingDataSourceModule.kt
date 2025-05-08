@@ -4,7 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import pro.branium.messenger.data.remote.SearchingDataSourceImpl
+import pro.branium.messenger.data.datasource.remote.SearchingDataSourceImpl
 import pro.branium.messenger.domain.datasource.SearchingDataSource
 
 @Module
